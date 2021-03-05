@@ -72,16 +72,16 @@ sequelize
 /* 데이터베이스 연결 */
 
 /* ROUTERS */
-app.use("/register", Register);
-app.use("/login", Login);
-app.use("/logout", Logout);
-app.use("/lecture", Lecture);
-app.use("/auth", Auth);
+app.use("/api/register", Register);
+app.use("/api/login", Login);
+app.use("/api/logout", Logout);
+app.use("/api/lecture", Lecture);
+app.use("/api/auth", Auth);
 app.use("/uploads", express.static("uploads"));
-app.use("/wargame", wargame_info);
-app.use("/admin", admin);
-app.use("/rank", rank);
-app.use("/LectureFiledownload", LectureFiledownload);
+app.use("/api/wargame", wargame_info);
+app.use("/api/admin", admin);
+app.use("/api/rank", rank);
+app.use("/api/LectureFiledownload", LectureFiledownload);
 /* ROUTERS */
 
 app.get("/", (req, res) => {
