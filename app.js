@@ -82,7 +82,7 @@ app.use("/api/wargame", wargame_info);
 app.use("/api/admin", admin);
 app.use("/api/rank", rank);
 app.use("/api/LectureFiledownload", LectureFiledownload);
-//testasdads
+//testasdadsasasdasdasd
 /* ROUTERS */
 
 app.get("/", (req, res) => {
