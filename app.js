@@ -82,6 +82,7 @@ app.use("/api/wargame", wargame_info);
 app.use("/api/admin", admin);
 app.use("/api/rank", rank);
 app.use("/api/LectureFiledownload", LectureFiledownload);
+console.log("123");
 //testasdadsasasdasdasd
 /* ROUTERS */
 
