@@ -1,9 +1,10 @@
 const express = require("express");
 const { isLoggedIn } = require("../../middleware/CheckLogin");
+const ApiLimit = require("../../middleware/ApiLimit");
 const LectureManage = require("./LectureManage");
 const router = express.Router();
 
-// router.use(isLoggedIn); // 로그인 확인
+router.use(isLoggedIn); // 로그인 확인
 router.get("/", (req, res, next) => {});
 const SetUpload = LectureManage.SetMulter();
 
@@ -160,27 +161,31 @@ router.get("/getlecturedata/:LectureID", async (req, res, next) => {
     res.status(200).send(Data);
 });
 
-router.post("/addlecturecomment", async (req, res, next) => {
-    try {
-        if (LectureManage.CheckCommentNull(req.body)) {
-            return res.status(400).send('{"Error" : "Find Null"}');
-        }
+router.post(
+    "/addlecturecomment",
+    ApiLimit.CommentApiLimiter,
+    async (req, res, next) => {
+        try {
+            if (LectureManage.CheckCommentNull(req.body)) {
+                return res.status(400).send('{"Error" : "Find Null"}');
+            }
 
-        if (await LectureManage.CheckCommentData(req.body)) {
+            if (await LectureManage.CheckCommentData(req.body)) {
+                return res.status(400).send('{"Error" : "Fail"}');
+            }
+
+            const Result = await LectureManage.InsertLectureComment(req);
+            if (Result) {
+                return res.status(200).send(Result);
+            } else {
+                return res.status(400).send('{"Error" : "Fail"}');
+            }
+        } catch (error) {
+            console.log(error);
             return res.status(400).send('{"Error" : "Fail"}');
         }
-
-        const Result = await LectureManage.InsertLectureComment(req);
-        if (Result) {
-            return res.status(200).send(Result);
-        } else {
-            return res.status(400).send('{"Error" : "Fail"}');
-        }
-    } catch (error) {
-        console.log(error);
-        return res.status(400).send('{"Error" : "Fail"}');
     }
-});
+);
 
 router.post("/deletelecturecomment", async (req, res, next) => {
     try {
