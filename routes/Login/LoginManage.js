@@ -1,4 +1,18 @@
 const passport = require("passport");
+const user_info = require("../../models/user_info");
+
+async function WriteLastIP(req) {
+    await user_info.update(
+        {
+            LastIp: req.headers["x-forwarded-for"]
+        },
+        {
+            where: {
+                ID: req.user.dataValues.ID
+            }
+        }
+    );
+}
 exports.CheckNull = function CheckNull(ID, PassWord) {
     if (!ID || !PassWord) {
         return true;
@@ -6,8 +20,9 @@ exports.CheckNull = function CheckNull(ID, PassWord) {
         return false;
     }
 };
-exports.PassPortHandler = function PassPortHandler(req, res, next) {
-    passport.authenticate("local", (authError, user, info) => {
+
+exports.PassPortHandler = async function PassPortHandler(req, res, next) {
+    passport.authenticate("local", async (authError, user, info) => {
         if (authError) {
             console.error(authError);
             return next(authError);
@@ -15,7 +30,7 @@ exports.PassPortHandler = function PassPortHandler(req, res, next) {
         if (!user) {
             return res.status(200).send(`${info.message}`);
         }
-        return req.login(user, loginError => {
+        return req.login(user, async loginError => {
             if (loginError) {
                 console.error(loginError);
                 return next(loginError);
@@ -28,13 +43,18 @@ exports.PassPortHandler = function PassPortHandler(req, res, next) {
                         Email: req.user.dataValues.Email
                     }
                 };
+                await WriteLastIP(req);
                 return res.status(200).send(Result);
             }
         });
     })(req, res, next); // 미들웨어 내의 미들웨어에는 (req, res, next)를 붙입니다.
 };
-exports.AlreadyLoginHandler = function AlreadyLoginHandler(req, res, next) {
-    passport.authenticate("local", (authError, user, info) => {
+exports.AlreadyLoginHandler = async function AlreadyLoginHandler(
+    req,
+    res,
+    next
+) {
+    passport.authenticate("local", async (authError, user, info) => {
         if (authError) {
             console.error(authError);
             return next(authError);
@@ -42,7 +62,7 @@ exports.AlreadyLoginHandler = function AlreadyLoginHandler(req, res, next) {
         if (!user) {
             return res.status(200).send(`${info.message}`);
         }
-        return req.login(user, loginError => {
+        return req.login(user, async loginError => {
             if (loginError) {
                 console.error(loginError);
                 return next(loginError);
@@ -56,6 +76,7 @@ exports.AlreadyLoginHandler = function AlreadyLoginHandler(req, res, next) {
                         Email: req.user.dataValues.Email
                     }
                 };
+                await WriteLastIP(req);
                 return res.status(200).send(Result);
             }
         });

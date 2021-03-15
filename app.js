@@ -1,5 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const requestIp = require("request-ip");
 dotenv.config();
 
 const session = require("express-session");
@@ -82,7 +83,7 @@ app.use("/api/wargame", wargame_info);
 app.use("/api/admin", admin);
 app.use("/api/rank", rank);
 app.use("/api/LectureFiledownload", LectureFiledownload);
-//test
+//testasdadsasasdasdasd
 /* ROUTERS */
 
 app.get("/", (req, res) => {
