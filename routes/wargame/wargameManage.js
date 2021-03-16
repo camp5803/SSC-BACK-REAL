@@ -1,7 +1,9 @@
+const { ReturnUserInfo } = require("../../middleware/ReturnUserInfo");
 const wargame_info = require("../../models/wargame_info");
 const user_info = require("../../models/user_info");
 const solver_table = require("../../models/solver_table");
 const lecture_comment = require("../../models/lecture_Comment");
+const rankManage = require("./../rank/rankmanage");
 const requestIp = require("request-ip");
 const multer = require("multer");
 const path = require("path");
@@ -32,7 +34,7 @@ exports.submitflag = async function submitflag(req) {
         }
         const pro_salt = await wargame_info.findOne({ where: { ChID }, attributes: ["ChSalt"] });
         const hash = bcrypt.hashSync(Flag, pro_salt.ChSalt);
-        const pro_flag = await wargame_info.findOne({ where: { ChFlag: hash }, attributes: ["ChID", "ChFlag", "ChScore"] });
+        const pro_flag = await wargame_info.findOne({ where: { ChFlag: hash }, attributes: ["ChID", "ChFlag", "ChScore","ChCategory"] });
         if (!pro_flag) {
             return false;
         }
@@ -56,16 +58,17 @@ exports.submitflag = async function submitflag(req) {
                     // 원래 있던 점수 + 지금 문제 점수
                     { Score: SScore.Score + pro_flag.ChScore, solved_at: Date.now() },
                     {
-                        where: { ID: ID }
+                        where: { ID: ID },
+                        solved_at:Date.now()
                     }
                 );
-
                 await solver_table.create({
                     ChID: pro_flag.ChID,
                     ID,
-                    created_at: Date.now()
+                    created_at: Date.now(),
+                    ChCategory: pro_flag.ChCategory
                 });
-
+                const redisrank = await rankManage.rank();
                 return true;
             }
         }

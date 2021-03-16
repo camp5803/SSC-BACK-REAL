@@ -10,4 +10,7 @@ router.get("/getrank", async (req, res, next) => {
     }
 });
 
+router.get("/",async(req,res,next)=>{
+    res.send('asdffff');
+})
 module.exports = router;

@@ -23,6 +23,7 @@ const Auth = require("./routes/Auth/Auth");
 const wargame_info = require("./routes/wargame/wargame_info");
 const admin = require("./routes/admin/admin");
 const rank = require("./routes/rank/ranking");
+const myinfo = require("./routes/myinfo/myinfo");
 const LectureFiledownload = require("./routes/Lecture/LectureFileDownLoad");
 /* 라우터 임포트 */
 
@@ -82,6 +83,7 @@ app.use("/uploads", express.static("uploads"));
 app.use("/api/wargame", wargame_info);
 app.use("/api/admin", admin);
 app.use("/api/rank", rank);
+app.use("/api/myinfo", myinfo);
 app.use("/api/LectureFiledownload", LectureFiledownload);
 //testasdadsasasdasdasd
 /* ROUTERS */
