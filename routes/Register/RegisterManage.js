@@ -9,7 +9,15 @@ exports.CheckInputAll = function CheckInputAll(req) {
     const NickRoll = /^[\w\Wㄱ-ㅎㅏ-ㅣ가-힣]{2,20}$/;
     const EmailRoll = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
 
-    if (!IDRoll.test(ID) || !PassWordRoll.test(PassWord) || !NickRoll.test(Nick) || !EmailRoll.test(Email)) {
+    if (
+        !IDRoll.test(ID) ||
+        !PassWordRoll.test(PassWord) ||
+        !NickRoll.test(Nick) ||
+        !EmailRoll.test(Email) ||
+        !req.body.Name ||
+        !req.body.StudentID ||
+        !req.body.Belong
+    ) {
         return true;
     } else {
         return false;
@@ -47,13 +55,16 @@ exports.CheckAlereadyNick = async function CheckAlereadyNick(Nick) {
 };
 
 exports.CreateUser = async function CreateUser(req) {
-    const { ID, PassWord, Nick, Email } = req.body;
+    const { ID, PassWord, Nick, Email, Name, StudentID, Belong } = req.body;
 
     const hash = await bcrypt.hash(PassWord, 12);
 
     await user_info.create({
         ID: ID,
         PassWord: hash,
+        Name,
+        StudentID,
+        Belong,
         Nick: Nick,
         Email: Email,
         LastIp: requestIp.getClientIp(req),

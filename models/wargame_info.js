@@ -26,14 +26,6 @@ module.exports = class wargame_info extends Sequelize.Model {
                     type: Sequelize.STRING(1000),
                     allowNull: true
                 },
-                // ChDirectory2: {
-                //   type: Sequelize.STRING(1000),
-                //   allowNull: true,
-                // },
-                // ChDirectory3: {
-                //   type: Sequelize.STRING(1000),
-                //   allowNull: true,
-                // },
                 ChScore: {
                     type: Sequelize.INTEGER(20),
                     allowNull: false

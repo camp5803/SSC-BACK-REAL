@@ -9,7 +9,6 @@ router.get("/:file_name", function (req, res, next) {
     var upload_folder = "C:\\SSC-BACK-REAL\\uploads\\";
     var file = upload_folder + req.params.file_name; // ex) /upload/files/sample.txt
     console.log(file);
-    console.log("12312311");
     try {
         if (fs.existsSync(file)) {
             // 파일이 존재하는지 체크
@@ -25,6 +24,7 @@ router.get("/:file_name", function (req, res, next) {
             var filestream = fs.createReadStream(file);
             filestream.pipe(res);
         } else {
+            console.log("not");
             res.send("해당 파일이 없습니다.");
             return;
         }

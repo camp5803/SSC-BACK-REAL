@@ -11,7 +11,10 @@ const salt = bcrypt.genSaltSync(10);
 exports.proinfo = async function proinfo(req) {
     const { ID } = req.user;
 
-    const proinfo = await solver_table.findAll({ where: { ID }, attributes: ["ChID"] });
+    const proinfo = await solver_table.findAll({
+        where: { ID },
+        attributes: ["ChID"]
+    });
     let Data = [];
     if (!proinfo) {
         return false;
@@ -30,9 +33,15 @@ exports.submitflag = async function submitflag(req) {
         if (!Flag || !ChID) {
             return false;
         }
-        const pro_salt = await wargame_info.findOne({ where: { ChID }, attributes: ["ChSalt"] });
+        const pro_salt = await wargame_info.findOne({
+            where: { ChID },
+            attributes: ["ChSalt"]
+        });
         const hash = bcrypt.hashSync(Flag, pro_salt.ChSalt);
-        const pro_flag = await wargame_info.findOne({ where: { ChFlag: hash }, attributes: ["ChID", "ChFlag", "ChScore"] });
+        const pro_flag = await wargame_info.findOne({
+            where: { ChFlag: hash },
+            attributes: ["ChID", "ChFlag", "ChScore"]
+        });
         if (!pro_flag) {
             return false;
         }
@@ -45,16 +54,24 @@ exports.submitflag = async function submitflag(req) {
         if (pro_flag.ChFlag === hash) {
             const { ID } = req.user;
 
-            const overlap = await solver_table.findOne({ where: { ChID: pro_flag.ChID } }); //중복풀이 방지
+            const overlap = await solver_table.findOne({
+                where: { ChID: pro_flag.ChID }
+            }); //중복풀이 방지
 
             if (overlap) {
                 return false;
             } else {
-                const SScore = await user_info.findOne({ where: { ID }, attributes: ["Score"] });
+                const SScore = await user_info.findOne({
+                    where: { ID },
+                    attributes: ["Score"]
+                });
 
                 await user_info.update(
                     // 원래 있던 점수 + 지금 문제 점수
-                    { Score: SScore.Score + pro_flag.ChScore, solved_at: Date.now() },
+                    {
+                        Score: SScore.Score + pro_flag.ChScore,
+                        solved_at: Date.now()
+                    },
                     {
                         where: { ID: ID }
                     }
@@ -87,7 +104,17 @@ exports.CheckWrongAccess = function CheckWrongAccess(req) {
 exports.datalist = async function datalist() {
     try {
         const problems = await wargame_info.findAll({
-            attributes: ["ChID", "ChCategory", "ChTitle", "ChDescription", "ChDirectory", "ChScore", "ChSolver", "ChLevel", "ChAuthor"]
+            attributes: [
+                "ChID",
+                "ChCategory",
+                "ChTitle",
+                "ChDescription",
+                "ChDirectory",
+                "ChScore",
+                "ChSolver",
+                "ChLevel",
+                "ChAuthor"
+            ]
         });
         if (problems) {
             return problems;
@@ -101,22 +128,33 @@ exports.datalist = async function datalist() {
 };
 /// 파일 업로드 API
 exports.SetMulter = function SetMulter() {
-    const storage = multer.diskStorage({
-        destination: (req, file, cb) => {
-            // 파일이 업로드될 경로 설정
-            cb(null, "uploads/");
-        },
-        filename: (req, file, cb) => {
-            // timestamp를 이용해 새로운 파일명 설정
-            let newFileName = new Date().valueOf() + path.extname(file.originalname);
-            cb(null, newFileName);
-        }
+    return multer({
+        storage: multer.diskStorage({
+            destination(req, file, done) {
+                done(null, "C:\\SSC-back\\uploads");
+            },
+            filename(req, file, done) {
+                const ext = path.extname(file.originalname);
+                done(
+                    null,
+                    path.basename(file.originalname, ext) + Date.now() + ext
+                );
+            }
+        }),
+        limits: { fileSize: 10 * 1024 * 1024 }
     });
-    var upload = multer({ storage: storage });
 };
+
 exports.wargame_upload = async function wargame_upload(req) {
     try {
-        const { ChCategory, ChTitle, ChDescription, ChScore, ChFlag, ChLevel } = req.body;
+        const {
+            ChCategory,
+            ChTitle,
+            ChDescription,
+            ChScore,
+            ChFlag,
+            ChLevel
+        } = req.body;
 
         ChAuthor = req.user.ID;
         const Chhash = bcrypt.hashSync(ChFlag, salt);
@@ -151,8 +189,22 @@ exports.wargame_update = async function wargame_update(req) {
     });
 };
 exports.CheckNull = function CheckNull(req) {
-    const { ChCategory, ChTitle, ChDescription, ChScore, ChFlag, ChLevel } = req.body;
-    if (!ChCategory || !ChTitle || !ChDescription || !ChScore || !ChFlag || !ChLevel) {
+    const {
+        ChCategory,
+        ChTitle,
+        ChDescription,
+        ChScore,
+        ChFlag,
+        ChLevel
+    } = req.body;
+    if (
+        !ChCategory ||
+        !ChTitle ||
+        !ChDescription ||
+        !ChScore ||
+        !ChFlag ||
+        !ChLevel
+    ) {
         return true;
     } else {
         return false;
@@ -190,13 +242,15 @@ exports.addcomment = async function addcomment(req) {
     });
 };
 exports.commentidcheck = async function commentidcheck(req) {
-    await lecture_comment.findAll({ where: { ChID: req.body.ChID, ID: req.user } }).then(function (results) {
-        if (results) {
-            return true;
-        } else {
-            return false;
-        }
-    });
+    await lecture_comment
+        .findAll({ where: { ChID: req.body.ChID, ID: req.user } })
+        .then(function (results) {
+            if (results) {
+                return true;
+            } else {
+                return false;
+            }
+        });
 };
 
 exports.commentupdate = async function commentupdate(req) {
@@ -213,7 +267,9 @@ exports.commentupdate = async function commentupdate(req) {
     });
 };
 exports.commentdelete = async function commentdelete(idx) {
-    const deleteidx = await lecture_Comment.lecture_Comment.destroy({ where: { ChId: idx } }); // 댓글 삭제
+    const deleteidx = await lecture_Comment.lecture_Comment.destroy({
+        where: { ChId: idx }
+    }); // 댓글 삭제
     if (deleteidx) {
         return false;
     } else {

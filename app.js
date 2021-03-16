@@ -24,6 +24,7 @@ const wargame_info = require("./routes/wargame/wargame_info");
 const admin = require("./routes/admin/admin");
 const rank = require("./routes/rank/ranking");
 const LectureFiledownload = require("./routes/Lecture/LectureFileDownLoad");
+const wargameFileDownLoad = require("./routes/wargame/wargameFileDownLoad");
 /* 라우터 임포트 */
 
 /* redis 설정 */
@@ -82,7 +83,8 @@ app.use("/uploads", express.static("uploads"));
 app.use("/api/wargame", wargame_info);
 app.use("/api/admin", admin);
 app.use("/api/rank", rank);
-app.use("/api/LectureFiledownload", LectureFiledownload);
+app.use("/api/lecturefiledownload", LectureFiledownload);
+app.use("/api/wargamefiledownload", wargameFileDownLoad);
 //testasdadsasasdasdasd
 /* ROUTERS */
 
