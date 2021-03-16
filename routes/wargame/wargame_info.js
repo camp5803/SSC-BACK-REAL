@@ -5,7 +5,7 @@ const lecture_comment = require("../../models/lecture_Comment");
 const wargameManage = require("./wargameManage.js");
 const requestIp = require("request-ip");
 const router = express.Router();
-
+const SetUpload = wargameManage.SetMulter();
 /// 문제들 목록 데이터 가져오는 API
 router.get("/wargamelist", async (req, res, next) => {
     try {
