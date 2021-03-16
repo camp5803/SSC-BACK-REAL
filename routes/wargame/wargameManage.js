@@ -1,7 +1,9 @@
+const { ReturnUserInfo } = require("../../middleware/ReturnUserInfo");
 const wargame_info = require("../../models/wargame_info");
 const user_info = require("../../models/user_info");
 const solver_table = require("../../models/solver_table");
 const lecture_comment = require("../../models/lecture_Comment");
+const rankManage = require("./../rank/rankmanage");
 const requestIp = require("request-ip");
 const multer = require("multer");
 const path = require("path");
@@ -38,10 +40,14 @@ exports.submitflag = async function submitflag(req) {
             attributes: ["ChSalt"]
         });
         const hash = bcrypt.hashSync(Flag, pro_salt.ChSalt);
+<<<<<<< HEAD
         const pro_flag = await wargame_info.findOne({
             where: { ChFlag: hash },
             attributes: ["ChID", "ChFlag", "ChScore"]
         });
+=======
+        const pro_flag = await wargame_info.findOne({ where: { ChFlag: hash }, attributes: ["ChID", "ChFlag", "ChScore","ChCategory"] });
+>>>>>>> 907c333e3672ab73abb28c6d1cb354f4ffe92347
         if (!pro_flag) {
             return false;
         }
@@ -73,16 +79,17 @@ exports.submitflag = async function submitflag(req) {
                         solved_at: Date.now()
                     },
                     {
-                        where: { ID: ID }
+                        where: { ID: ID },
+                        solved_at:Date.now()
                     }
                 );
-
                 await solver_table.create({
                     ChID: pro_flag.ChID,
                     ID,
-                    created_at: Date.now()
+                    created_at: Date.now(),
+                    ChCategory: pro_flag.ChCategory
                 });
-
+                const redisrank = await rankManage.rank();
                 return true;
             }
         }

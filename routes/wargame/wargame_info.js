@@ -134,7 +134,9 @@ router.get("/", async (req, res, next) => {
     // if(wargameManage.submitflag(flag)){
     //     return res.send('success!!');
     // }
-    res.send("welcome!");
+    const addr = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+    res.send(addr)  
+   
     //const { ChID } = req.body;
     //   const user = await user_info.findOne({ where : { ChID } });
 

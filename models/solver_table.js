@@ -17,7 +17,10 @@ module.exports = class solver_table extends Sequelize.Model {
                     type: Sequelize.STRING(30),
                     allowNull: false
                 },
-               
+                ChCategory: {
+                    type: Sequelize.STRING(45),
+                    allowNull: false
+                },
                 created_at: {
                     type: Sequelize.DATE,
                     allowNull: true

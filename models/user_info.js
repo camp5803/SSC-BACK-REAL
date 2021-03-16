@@ -35,6 +35,21 @@ module.exports = class user_info extends Sequelize.Model {
                     allowNull: false,
                     unique: true
                 },
+                Name: {
+                    type: Sequelize.STRING(50),
+                    allowNull: false,
+                    unique: true
+                },
+                StudentID: {
+                    type: Sequelize.STRING(50),
+                    allowNull: false,
+                    unique: true
+                },
+                Belong: {
+                    type: Sequelize.STRING(50),
+                    allowNull: true,
+                    unique: true
+                },
                 LastIp: {
                     type: Sequelize.STRING(50),
                     allowNull: false
