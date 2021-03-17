@@ -13,12 +13,20 @@ async function WriteLastIP(req) {
         }
     );
 }
-exports.CheckNull = function CheckNull(ID, PassWord) {
+exports.CheckNull = async function CheckNull(ID, PassWord) {
+     //삭제 당하였을 경우
+    const deleted = await user_info.findOne({ where: {ID}, attributes: ["deleted"] });
     if (!ID || !PassWord) {
+        console.log(123)
         return true;
-    } else {
+      }
+    else if(deleted.deleted){
+        return true;
+    }
+     else {
         return false;
     }
+
 };
 
 exports.PassPortHandler = async function PassPortHandler(req, res, next) {
