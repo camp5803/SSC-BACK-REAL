@@ -40,14 +40,7 @@ exports.submitflag = async function submitflag(req) {
             attributes: ["ChSalt"]
         });
         const hash = bcrypt.hashSync(Flag, pro_salt.ChSalt);
-<<<<<<< HEAD
-        const pro_flag = await wargame_info.findOne({
-            where: { ChFlag: hash },
-            attributes: ["ChID", "ChFlag", "ChScore"]
-        });
-=======
         const pro_flag = await wargame_info.findOne({ where: { ChFlag: hash }, attributes: ["ChID", "ChFlag", "ChScore","ChCategory"] });
->>>>>>> 907c333e3672ab73abb28c6d1cb354f4ffe92347
         if (!pro_flag) {
             return false;
         }
@@ -100,7 +93,7 @@ exports.submitflag = async function submitflag(req) {
 
 //아이디 check
 exports.CheckWrongAccess = function CheckWrongAccess(req) {
-    const { ID } = req.body;
+    const { ID } = req.user;
     if (ReturnUserInfo(req).ID != ID) {
         return true;
     } else {
