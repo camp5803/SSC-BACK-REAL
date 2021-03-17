@@ -40,14 +40,10 @@ exports.submitflag = async function submitflag(req) {
             attributes: ["ChSalt"]
         });
         const hash = bcrypt.hashSync(Flag, pro_salt.ChSalt);
-<<<<<<< HEAD
         const pro_flag = await wargame_info.findOne({
             where: { ChFlag: hash },
-            attributes: ["ChID", "ChFlag", "ChScore"]
+            attributes: ["ChID", "ChFlag", "ChScore", "ChCategory"]
         });
-=======
-        const pro_flag = await wargame_info.findOne({ where: { ChFlag: hash }, attributes: ["ChID", "ChFlag", "ChScore","ChCategory"] });
->>>>>>> 907c333e3672ab73abb28c6d1cb354f4ffe92347
         if (!pro_flag) {
             return false;
         }
@@ -80,7 +76,7 @@ exports.submitflag = async function submitflag(req) {
                     },
                     {
                         where: { ID: ID },
-                        solved_at:Date.now()
+                        solved_at: Date.now()
                     }
                 );
                 await solver_table.create({
