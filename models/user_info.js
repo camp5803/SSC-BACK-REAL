@@ -50,6 +50,11 @@ module.exports = class user_info extends Sequelize.Model {
                     allowNull: true,
                     unique: true
                 },
+                profilepicture: {
+                    type: Sequelize.STRING(1000),
+                    allowNull: false,
+                    defaultValue: "/default.png"
+                },
                 LastIp: {
                     type: Sequelize.STRING(50),
                     allowNull: false
@@ -101,5 +106,15 @@ module.exports = class user_info extends Sequelize.Model {
                 collate: "utf8mb4_general_ci"
             }
         );
+    }
+    static associate(db) {
+        db.user_info.hasOne(db.lecture_comment, {
+            foreignKey: "ID",
+            sourceKey: "ID"
+        });
+        db.user_info.hasMany(db.solver_table, {
+            foreignKey: "ID",
+            sourceKey: "ID"
+        });
     }
 };

@@ -1,6 +1,22 @@
 const user_info = require("../../models/user_info");
 const solver_table = require("../../models/solver_table");
 const LoginManage = require("./../Login/LoginManage");
+const wargame_info = require("../../models/wargame_info");
+const { QueryTypes } = require("sequelize");
+const Sequelize = require("sequelize");
+
+const sequelize = new Sequelize("saessak", "saessakdb", "~!saessak2021~!", {
+    host: "211.229.250.147",
+    dialect: "mysql",
+    pool: {
+        max: 5,
+        min: 0,
+        acquire: 30000,
+        idle: 10000
+    },
+    operatorsAliases: false
+});
+
 exports.myinfomanage = async function myinfomanage(req) {
     try {
         ID = req.user.ID;
@@ -17,10 +33,12 @@ exports.myinfomanage = async function myinfomanage(req) {
                 "Score"
             ]
         });
+
         const solves = await solver_table.findAll({
             where: { ID },
             attributes: ["ChID", "ChCategory"]
         });
+
         if (!solves) {
             return {
                 myinfo: myinfo,
@@ -28,9 +46,18 @@ exports.myinfomanage = async function myinfomanage(req) {
             };
         }
 
+        const solvelist = await sequelize.query(
+            "SELECT ChTitle,ChCategory,ChScore FROM wargame_info WHERE ChID in (SELECT ChID FROM solver_table where ID = ?)",
+            {
+                replacements: [req.user.ID],
+                type: QueryTypes.SELECT
+            }
+        );
+
         return {
             myinfo: myinfo,
-            solves: solves
+            solves: solves,
+            solvelist: solvelist
         };
     } catch (err) {
         console.log(err);

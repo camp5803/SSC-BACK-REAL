@@ -8,7 +8,12 @@ const lecture = require("./lecture");
 const lecture_data = require("./lecture_data");
 const lecture_info = require("./lecture_info");
 const lecture_comment = require("./lecture_comment");
-const sequelize = new Sequelize(config.database, config.username, config.password, config);
+const sequelize = new Sequelize(
+    config.database,
+    config.username,
+    config.password,
+    config
+);
 const wargame_info = require("./wargame_info");
 const solver_table = require("./solver_table");
 
@@ -30,6 +35,8 @@ lecture_comment.init(sequelize);
 wargame_info.init(sequelize);
 solver_table.init(sequelize);
 
+user_info.associate(db);
+lecture_comment.associate(db);
 lecture.associate(db);
 lecture_data.associate(db);
 lecture_info.associate(db);

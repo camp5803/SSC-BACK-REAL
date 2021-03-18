@@ -234,7 +234,6 @@ router.get("/getlecturecomment/:LectureID", async (req, res, next) => {
 
 router.post("/deletecategory", async (req, res, next) => {
     try {
-        console.log(req.body.LectureInfoID);
         if (
             await LectureManage.CheckDeleteLectureCategoryNull(
                 req.body.LectureInfoID

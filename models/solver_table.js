@@ -25,8 +25,6 @@ module.exports = class solver_table extends Sequelize.Model {
                     type: Sequelize.DATE,
                     allowNull: true
                 }
-
-
             },
             {
                 sequelize,
@@ -41,7 +39,10 @@ module.exports = class solver_table extends Sequelize.Model {
         );
     }
 
-    //   static associate(db) {
-    //     db.User.hasMany(db.Comment, { foreignKey: 'commenter', sourceKey: 'id' });
-    //   }
+    static associate(db) {
+        db.solver_table.belongsTo(db.user_info, {
+            foreignKey: "ID",
+            sourceKey: "ID"
+        });
+    }
 };

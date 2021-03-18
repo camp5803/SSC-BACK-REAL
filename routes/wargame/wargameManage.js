@@ -31,7 +31,7 @@ exports.proinfo = async function proinfo(req) {
 exports.submitflag = async function submitflag(req) {
     try {
         const { Flag, ChID } = req.body;
-        // console.log(flag, ChID);
+
         if (!Flag || !ChID) {
             return false;
         }
@@ -96,7 +96,7 @@ exports.submitflag = async function submitflag(req) {
 
 //아이디 check
 exports.CheckWrongAccess = function CheckWrongAccess(req) {
-    const { ID } = req.body;
+    const { ID } = req.user;
     if (ReturnUserInfo(req).ID != ID) {
         return true;
     } else {

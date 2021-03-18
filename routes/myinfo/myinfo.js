@@ -7,8 +7,17 @@ router.get("/", async (req, res, next) => {
     try {
         if (req.user.ID) {
             const apimyinfo = await Myinfomanage.myinfomanage(req);
+
             if (apimyinfo) {
-                const Categories = { WEB: 0, REV: 0, PWN: 0, FOR: 0, CRY: 0 };
+                //              myinfo["solves"][0].ChCategory
+                const Categories = {
+                    WEB: 0,
+                    REV: 0,
+                    PWN: 0,
+                    FOR: 0,
+                    CRY: 0,
+                    MISC: 0
+                };
                 for (let key in apimyinfo["solves"]) {
                     if ((key, apimyinfo["solves"][key].ChCategory) == "WEB")
                         Categories.WEB += 1;
@@ -28,9 +37,14 @@ router.get("/", async (req, res, next) => {
                         (key, apimyinfo["solves"][key].ChCategory) == "CRY"
                     )
                         Categories.CRY += 1;
+                    else if (
+                        (key, apimyinfo["solves"][key].ChCategory) == "MISC"
+                    )
+                        Categories.MISC += 1;
                 }
                 const myinfo = apimyinfo.myinfo;
-                const returnmyinfo = { myinfo, Categories };
+                const solvelist = apimyinfo.solvelist;
+                const returnmyinfo = { myinfo, Categories, solvelist };
                 return res.status(200).send(returnmyinfo);
             } else {
                 return res.status(200).send('{"Error":"no data"}');
@@ -45,7 +59,6 @@ router.get("/", async (req, res, next) => {
 router.post("/myinfoupdate", async (req, res, next) => {
     try {
         if (!req.body.PassWord) {
-            console.log("here");
             await Myinfomanage.myinfoupdate(req);
             return res.status(201).send('{"Result":"OK"}');
         } else if (req.user.PassWord < 8 || req.user.Password > 20) {
