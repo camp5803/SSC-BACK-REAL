@@ -40,7 +40,7 @@ exports.submitflag = async function submitflag(req) {
             attributes: ["ChSalt"]
         });
         const hash = bcrypt.hashSync(Flag, pro_salt.ChSalt);
-        const pro_flag = await wargame_info.findOne({ where: { ChFlag: hash }, attributes: ["ChID", "ChFlag", "ChScore","ChCategory"] });
+        const pro_flag = await wargame_info.findOne({ where: { ChFlag: hash }, attributes: ["ChID", "ChFlag", "ChScore","ChCategory","ChSolver"] });
         if (!pro_flag) {
             return false;
         }
@@ -82,7 +82,16 @@ exports.submitflag = async function submitflag(req) {
                     created_at: Date.now(),
                     ChCategory: pro_flag.ChCategory
                 });
-                const redisrank = await rankManage.rank();
+                await wargame_info.update(
+                    // 푼 문제 솔버+1
+                    {
+                        ChSolver: 1 + pro_flag.ChSolver,
+                    },
+                    {
+                        where: { ChFlag: hash }
+                    }
+                );
+                
                 return true;
             }
         }

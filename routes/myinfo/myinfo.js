@@ -21,7 +21,7 @@ router.get("/", async (req, res, next) => {
      else if((key, apimyinfo["solves"][key].ChCategory)=="FOR") Categories.FOR+=1
      else if((key, apimyinfo["solves"][key].ChCategory)=="CRY") Categories.CRY+=1
      else if((key, apimyinfo["solves"][key].ChCategory)=="MISC") Categories.MISC+=1
- }
+ }  
               const myinfo=apimyinfo.myinfo
               const returnmyinfo={myinfo,Categories};
               return res.status(200).send(returnmyinfo);

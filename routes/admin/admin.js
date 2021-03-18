@@ -7,7 +7,9 @@ const router = express.Router();
 const wargameManage=require('./../wargame/wargameManage')
 const rankManage=require('./../rank/rankmanage')
 const user_info = require("../../models/user_info");
+const month_CTF = require("../../models/month_CTF");
 const adminManage  = require("./adminManage")
+const CTFManage = require("./CTFManage");
 
 /// admin 확인 후 입장
 router.get('/', async   (req,res,next)=>{
@@ -101,8 +103,6 @@ router.post('/userinfoupdate', async(req,res,next)=>{
 })
 
 
-
-
 // 워게임 추가
 router.post('/api/wargameadd', async(req,res,next)=>{
 try{
@@ -170,19 +170,93 @@ router.post('/api/wargamedelete', async(req,res,next)=>{
     
 })
 
-router.get('/rank', async(req,res,next)=>{
-    try {   
-        const rank = await rankManage.rank();
-        res.send(JSON.stringify(rank));
-        
-            return res.status(200).send('{"Error":"no data"}') 
+
+// CTF 정보 목록 테이블
+router.post('/CTF', async(req,res,next)=>{
+    try{
+            if (wargameManage.CheckWrongAccess(req)) {
+                return res.status(400).send('{"Error" : "Wrong Access"}');
+            }   
+            if (await permit.Returnadmincheck(req)){
+                return res.status(400).send('{"Error" : "Not admin"}');
+            }  
+            console.log("month") 
+            userinfo = await user_info.findAll();
+            console.log(userinfo)
+            month = await month_CTF.findAll();
+            console.log("month")    
+            if (month) {
+                return res.status(200).send(JSON.stringify(month)); 
+            }
+            else { return res.status(400).send('{"Error" : "No CTF"}'); }
         }
-    catch (err) {
-        return res.status(400).send('{"Error" : "Fail"}');
-    }
+            catch (error) {
+                console.error(error)
+                return res.status(200).send('{"Error" : "Wrong"}')
+            }
 })
-
-
-
+// CTF 정보 추가
+router.post('/api/CTFadd', async(req,res,next)=>{
+    try{
+        if (wargameManage.CheckWrongAccess(req)) {
+            return res.status(400).send('{"Error" : "Wrong Access"}');
+        }
+        if (permit.Returnadmincheck()){
+            return res.status(400).send('{"Error" : "Not admin"}');
+        }   
+        if (CTFManage.CheckNull(req)) {
+            return res.status(400).send('{"Error" : "Find Null"}');
+        }
+        if (await CTFManage.CTF_upload(req)){
+            return res.status(201).redirect("/");
+        };
+    }
+    catch(error){
+        console.error(error)
+        return res.status(200).send('{"Error" : "Wrong"}')
+    }  
+    
+})
+// CTF 수정
+router.post('/api/CTFmodify', async(req,res,next)=>{
+        try{
+            if (wargameManage.CheckWrongAccess(req)) {
+                return res.status(400).send('{"Error" : "Wrong Access"}');
+            }
+            if (permit.Returnadmincheck()){
+                return res.status(400).send('{"Error" : "Not admin"}');
+            }   
+            if (CTFManage.CheckNull(req)) {
+                return res.status(400).send('{"Error" : "Find Null"}');
+            }
+            if (await CTFManage.CTFupdate(req)){
+                return res.status(201).redirect("/");
+            };
+        }
+        catch(error){
+            console.error(error)
+            return res.status(200).send('{"Error" : "Wrong"}')
+        }  
+        
+})
+// CTF 삭제
+router.post('/api/CTFdelete', async(req,res,next)=>{
+    try{
+        if (wargameManage.CheckWrongAccess(req)) {
+            return res.status(400).send('{"Error" : "Wrong Access"}');
+        }
+        if (permit.Returnadmincheck()){
+            return res.status(400).send('{"Error" : "Not admin"}');
+        }   
+        if (CTFManage.pdelete(req)) {
+            return res.status(400).send('{"Error" : "Find Null"}');
+        }
+    }
+    catch(error){
+        console.error(error)
+        return res.status(200).send('{"Error" : "Wrong"}')
+    }  
+    
+})
 
 module.exports = router
