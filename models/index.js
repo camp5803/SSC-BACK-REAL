@@ -11,6 +11,7 @@ const lecture_comment = require("./lecture_comment");
 const submit_history = require("./submit_history");
 const wargame_info = require("./wargame_info");
 const solver_table = require("./solver_table");
+
 const sequelize = new Sequelize(
     config.database,
     config.username,

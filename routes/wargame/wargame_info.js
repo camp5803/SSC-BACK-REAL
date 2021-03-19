@@ -179,7 +179,7 @@ router.get("/proinfo", async (req, res, next) => {
 router.get("/solvelist/:ChID", async (req, res, next) => {
     try {
         const { ChID } = req.params;
-        console.log(ChID);
+
         if (wargameManage.CheckSolveListNull(req.params)) {
             return res.status(400).send('{"Error" : "Fail"}');
         }

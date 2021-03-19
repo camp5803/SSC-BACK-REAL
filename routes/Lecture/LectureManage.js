@@ -306,6 +306,7 @@ exports.InsertLectureComment = async function InsertLectureComment(req) {
             }
         });
         if (Check) {
+            let time = Date.now();
             const ReplyResult = await lecture_comment.create({
                 LectureID,
                 ID: req.user.ID,
@@ -313,8 +314,30 @@ exports.InsertLectureComment = async function InsertLectureComment(req) {
                 LectureCommentContent,
                 LectureCommentType: 1,
                 LectureCommentGroup,
-                created_at: Date.now()
+                created_at: time
             });
+            let date = new Date(time);
+            // Hours part from the timestamp
+            let year = date.getFullYear().toString(); //년도 뒤에 두자리
+            let month = ("0" + (date.getMonth() + 1)).slice(-2); //월 2자리 (01, 02 ... 12)
+            let day = ("0" + date.getDate()).slice(-2); //일 2자리 (01, 02 ... 31)
+            let hour = ("0" + date.getHours()).slice(-2); //시 2자리 (00, 01 ... 23)
+            let minute = ("0" + date.getMinutes()).slice(-2); //분 2자리 (00, 01 ... 59)
+            let second = ("0" + date.getSeconds()).slice(-2); //초 2자리 (00, 01 ... 59)
+            // Will display time in 10:30:23 format
+            let returnDate =
+                year +
+                "-" +
+                month +
+                "-" +
+                day +
+                " " +
+                hour +
+                ":" +
+                minute +
+                ":" +
+                second;
+
             const Final = {
                 Result: "OK",
                 LectureCommentID: ReplyResult.dataValues.LectureCommentID,
@@ -323,9 +346,10 @@ exports.InsertLectureComment = async function InsertLectureComment(req) {
                     ReplyResult.dataValues.LectureCommentContent,
                 LectureCommentGroup: ReplyResult.dataValues.LectureCommentGroup,
                 LectureCommentType: ReplyResult.dataValues.LectureCommentType,
-                created_at: ReplyResult.dataValues.created_at,
+                created_at: returnDate,
                 deleted: 0
             };
+
             return Final;
         } else {
             return false;
@@ -365,6 +389,7 @@ exports.InsertLectureComment = async function InsertLectureComment(req) {
             created_at: CommentResult.dataValues.created_at,
             deleted: 0
         };
+
         return Final;
     }
     return false;

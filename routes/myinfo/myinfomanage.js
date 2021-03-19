@@ -14,6 +14,7 @@ const sequelize = new Sequelize("saessak", "saessakdb", "~!saessak2021~!", {
         acquire: 30000,
         idle: 10000
     },
+    logging: false,
     operatorsAliases: false
 });
 
@@ -69,7 +70,7 @@ exports.myinfoupdate = async function myinfoupdate(req) {
         //await LoginManage.WriteLastIP(req); 합병하면 푸셈
         // const { Nick, Comment, Name, StudentID, Email, Belong } = req.body;
         const { Comment } = req.body;
-        console.log(Comment);
+
         await user_info.update(
             {
                 Comment

@@ -3,7 +3,6 @@ const RegisterManage = require("./RegisterManage");
 const router = express.Router();
 
 router.post("/", async (req, res, next) => {
-    console.log(req.body);
     if (RegisterManage.CheckInputAll(req)) {
         return res.status(200).send('{"Result" : "Wrong Input"}');
     }
