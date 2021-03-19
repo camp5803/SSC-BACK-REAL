@@ -14,19 +14,16 @@ async function WriteLastIP(req) {
     );
 }
 exports.CheckNull = async function CheckNull(ID, PassWord) {
-     //삭제 당하였을 경우
-    const deleted = await user_info.findOne({ where: {ID}, attributes: ["deleted"] });
+    //삭제 당하였을 경우
+    // const deleted = await user_info.findOne({
+    //     where: { ID },
+    //     attributes: ["deleted"]
+    // });
     if (!ID || !PassWord) {
-        console.log(123)
         return true;
-      }
-    else if(deleted.deleted){
-        return true;
-    }
-     else {
+    } else {
         return false;
     }
-
 };
 
 exports.PassPortHandler = async function PassPortHandler(req, res, next) {
@@ -48,7 +45,8 @@ exports.PassPortHandler = async function PassPortHandler(req, res, next) {
                     UserInfo: {
                         ID: req.user.dataValues.ID,
                         Nick: req.user.dataValues.Nick,
-                        Email: req.user.dataValues.Email
+                        Email: req.user.dataValues.Email,
+                        ProfileImg: req.user.dataValues.profilepicture
                     }
                 };
                 await WriteLastIP(req);
@@ -62,6 +60,7 @@ exports.AlreadyLoginHandler = async function AlreadyLoginHandler(
     res,
     next
 ) {
+    console.log("inalreadylogin");
     passport.authenticate("local", async (authError, user, info) => {
         if (authError) {
             console.error(authError);
@@ -81,7 +80,8 @@ exports.AlreadyLoginHandler = async function AlreadyLoginHandler(
                     UserInfo: {
                         ID: req.user.dataValues.ID,
                         Nick: req.user.dataValues.Nick,
-                        Email: req.user.dataValues.Email
+                        Email: req.user.dataValues.Email,
+                        ProfileImg: req.user.dataValues.profilepicture
                     }
                 };
                 await WriteLastIP(req);

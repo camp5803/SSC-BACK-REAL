@@ -134,9 +134,9 @@ router.get("/", async (req, res, next) => {
     // if(wargameManage.submitflag(flag)){
     //     return res.send('success!!');
     // }
-    const addr = req.headers['x-forwarded-for'] || req.connection.remoteAddress
-    res.send(addr)  
-   
+    const addr = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+    res.send(addr);
+
     //const { ChID } = req.body;
     //   const user = await user_info.findOne({ where : { ChID } });
 
@@ -171,6 +171,20 @@ router.get("/proinfo", async (req, res, next) => {
         } else {
             return res.status(200).send(proinfo);
         }
+    } catch (err) {
+        return res.status(400).send('{"Error" : "Fail"}');
+    }
+});
+
+router.get("/solvelist/:ChID", async (req, res, next) => {
+    try {
+        const { ChID } = req.params;
+        console.log(ChID);
+        if (wargameManage.CheckSolveListNull(req.params)) {
+            return res.status(400).send('{"Error" : "Fail"}');
+        }
+        const data = await wargameManage.GetChallengeSolverList(req.params);
+        return res.status(200).send(data);
     } catch (err) {
         return res.status(400).send('{"Error" : "Fail"}');
     }

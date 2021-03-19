@@ -148,7 +148,6 @@ exports.InsertLecture = async function InsertLecture(
     file,
     user
 ) {
-    console.log(user);
     const InsertLecture = await lecture.create({
         LectureInfoID: LectureInfoID,
         LectureTitle: LectureTitle,
@@ -159,16 +158,15 @@ exports.InsertLecture = async function InsertLecture(
     });
 
     const InsertResult = JSON.parse(JSON.stringify(InsertLecture));
-    const UploadResult = JSON.parse(JSON.stringify(file));
-    console.log(UploadResult);
-    if (UploadResult) {
+
+    if (file) {
+        const UploadResult = JSON.parse(JSON.stringify(file));
+
         await lecture_data.create({
             LectureID: InsertResult.LectureID,
             ID: user.ID,
             FileName: UploadResult.filename,
-            URL:
-                "http://127.0.0.1:9821/lecturefiledownload/" +
-                UploadResult.filename,
+            URL: UploadResult.filename,
             created_at: Date.now()
         });
     }
@@ -291,7 +289,6 @@ exports.CheckCommentData = async function CheckCommentData(body) {
 };
 exports.CheckCommentNull = function CheckCommentNull(body) {
     const { LectureID, LectureCommentContent } = body;
-    console.log(LectureID, LectureCommentContent);
     if (!LectureID || !LectureCommentContent) {
         return true;
     } else {
@@ -394,12 +391,20 @@ exports.GetLectureComment = async function GetLectureComment(params) {
         order: [
             ["LectureCommentGroup", "DESC"],
             ["LectureCommentID", "ASC"]
+        ],
+        include: [
+            {
+                model: user_info,
+                required: false,
+                attributes: ["profilepicture"]
+            }
         ]
     });
 
     const FinalData = [];
     Data.map(data => {
         let current = data.LectureCommentID;
+
         if (data.deleted == 0) {
             let manage = {
                 LectureCommentID: data.LectureCommentID,
@@ -407,6 +412,7 @@ exports.GetLectureComment = async function GetLectureComment(params) {
                 LectureCommentContent: data.LectureCommentContent,
                 LectureCommentGroup: data.LectureCommentGroup,
                 LectureCommentType: data.LectureCommentType,
+                ProfileImg: data.user_info.dataValues.profilepicture,
                 created_at: data.created_at,
                 deleted: data.deleted
             };
@@ -425,6 +431,8 @@ exports.GetLectureComment = async function GetLectureComment(params) {
                             Nick: data.Nick,
                             LectureCommentContent: data.LectureCommentContent,
                             LectureCommentGroup: data.LectureCommentGroup,
+                            ProfileImg:
+                                data.user_info.dataValues.profilepicture,
                             LectureCommentType: data.LectureCommentType,
                             created_at: data.created_at,
                             deleted: data.deleted
@@ -542,7 +550,6 @@ exports.DeleteLectureCategory = async function DeleteLectureCategory(
 exports.CheckDeleteLectureCategoryNull = async function CheckDeleteLectureCategoryNull(
     LectureInfoID
 ) {
-    console.log(LectureInfoID);
     if (LectureInfoID == null) {
         return true;
     } else {

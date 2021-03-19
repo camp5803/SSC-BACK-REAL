@@ -5,15 +5,15 @@ const Op = Sequelize.Op;
 exports.rank = async function rank(req) {
     try {
         const ranklist = await user_info.findAll({ where: { permit: 0 } });
-        
+
         if (!ranklist) {
             return res.status(200).send('{"Error" : "No Data"}');
         }
-        
+
         if (ranklist) {
             const rankorder = await user_info.findAll({
                 where: { permit: 0, Score: { [Op.ne]: 0 } },
-                attributes: ["Nick", "Comment", "Score"],
+                attributes: ["Nick", "Comment", "Score", "solved_at"],
                 order: [
                     ["Score", "DESC"],
                     ["solved_at", "ASC"]
@@ -31,15 +31,15 @@ exports.rank = async function rank(req) {
 exports.myrank = async function myrank(req) {
     try {
         const myranklist = await user_info.findAll({ where: { permit: 0 } });
-        
+
         if (!myranklist) {
             return res.status(200).send('{"Error" : "No Data"}');
         }
-        
+
         if (myranklist) {
             const myrankorder = await user_info.findAll({
                 where: { permit: 0, Score: { [Op.ne]: 0 } },
-                attributes: ["ID","Score"],
+                attributes: ["ID", "Score"],
                 order: [
                     ["Score", "DESC"],
                     ["solved_at", "ASC"]

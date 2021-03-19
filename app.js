@@ -81,6 +81,7 @@ app.use("/api/logout", Logout);
 app.use("/api/lecture", Lecture);
 app.use("/api/auth", Auth);
 app.use("/uploads", express.static("uploads"));
+app.use("/profile", express.static("profilepicture"));
 app.use("/api/wargame", wargame_info);
 app.use("/api/admin", admin);
 app.use("/api/rank", rank);

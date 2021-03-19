@@ -68,5 +68,9 @@ module.exports = class lecture_comment extends Sequelize.Model {
             foreignKey: "LectureID",
             sourceKey: "LectureID"
         });
+        db.lecture_comment.belongsTo(db.user_info, {
+            foreignKey: "ID",
+            sourceKey: "ID"
+        });
     }
 };
