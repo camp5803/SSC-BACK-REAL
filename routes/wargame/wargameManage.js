@@ -32,7 +32,6 @@ exports.proinfo = async function proinfo(req) {
 exports.submitflag = async function submitflag(req) {
     try {
         const { Flag, ChID } = req.body;
-
         if (!Flag || !ChID) {
             return false;
         }
@@ -50,6 +49,7 @@ exports.submitflag = async function submitflag(req) {
             attributes: ["ChSalt"]
         });
         const hash = bcrypt.hashSync(Flag, pro_salt.ChSalt);
+
         const pro_flag = await wargame_info.findOne({
             where: { ChFlag: hash },
             attributes: ["ChID", "ChFlag", "ChScore", "ChCategory", "ChSolver"]
@@ -67,7 +67,7 @@ exports.submitflag = async function submitflag(req) {
             const { ID } = req.user;
 
             const overlap = await solver_table.findOne({
-                where: { ChID: pro_flag.ChID }
+                where: { ChID: pro_flag.ChID, ID }
             }); //중복풀이 방지
 
             if (overlap) {
