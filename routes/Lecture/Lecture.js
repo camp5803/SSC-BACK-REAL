@@ -15,7 +15,7 @@ router.post("/write", SetUpload.single("upload"), async (req, res, next) => {
         if (LectureManage.CheckWriteNull(req.body)) {
             return res.status(400).send('{"Error" : "Find Null"}');
         }
-
+        console.log(req.file);
         // if (LectureManage.CheckWrtieWrongAccess(req)) {
         //     return res.status(400).send('{"Error" : "Wrong Access"}');
         // }
@@ -163,7 +163,7 @@ router.get("/getlecturedata/:LectureID", async (req, res, next) => {
 
 router.post(
     "/addlecturecomment",
-    ApiLimit.CommentApiLimiter,
+    // ApiLimit.CommentApiLimiter,
     async (req, res, next) => {
         try {
             if (LectureManage.CheckCommentNull(req.body)) {

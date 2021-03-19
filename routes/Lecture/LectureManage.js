@@ -158,16 +158,15 @@ exports.InsertLecture = async function InsertLecture(
     });
 
     const InsertResult = JSON.parse(JSON.stringify(InsertLecture));
-    const UploadResult = JSON.parse(JSON.stringify(file));
 
-    if (UploadResult) {
+    if (file) {
+        const UploadResult = JSON.parse(JSON.stringify(file));
+
         await lecture_data.create({
             LectureID: InsertResult.LectureID,
             ID: user.ID,
             FileName: UploadResult.filename,
-            URL:
-                "http://127.0.0.1:9821/lecturefiledownload/" +
-                UploadResult.filename,
+            URL: UploadResult.filename,
             created_at: Date.now()
         });
     }

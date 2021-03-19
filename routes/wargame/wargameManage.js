@@ -3,6 +3,7 @@ const wargame_info = require("../../models/wargame_info");
 const user_info = require("../../models/user_info");
 const solver_table = require("../../models/solver_table");
 const lecture_comment = require("../../models/lecture_Comment");
+const submit_history = require("../../models/submit_history");
 const rankManage = require("./../rank/rankmanage");
 const requestIp = require("request-ip");
 const multer = require("multer");
@@ -35,6 +36,15 @@ exports.submitflag = async function submitflag(req) {
         if (!Flag || !ChID) {
             return false;
         }
+        const SaveHistory = await submit_history.create({
+            ID: req.user.ID,
+            ChID: ChID,
+            Contents: Flag,
+            created_at: Date.now()
+        });
+        if (!SaveHistory) {
+            return false;
+        }
         const pro_salt = await wargame_info.findOne({
             where: { ChID },
             attributes: ["ChSalt"]
@@ -42,7 +52,7 @@ exports.submitflag = async function submitflag(req) {
         const hash = bcrypt.hashSync(Flag, pro_salt.ChSalt);
         const pro_flag = await wargame_info.findOne({
             where: { ChFlag: hash },
-            attributes: ["ChID", "ChFlag", "ChScore", "ChCategory"]
+            attributes: ["ChID", "ChFlag", "ChScore", "ChCategory", "ChSolver"]
         });
         if (!pro_flag) {
             return false;
@@ -85,7 +95,16 @@ exports.submitflag = async function submitflag(req) {
                     created_at: Date.now(),
                     ChCategory: pro_flag.ChCategory
                 });
-                const redisrank = await rankManage.rank();
+                await wargame_info.update(
+                    // 푼 문제 솔버+1
+                    {
+                        ChSolver: 1 + pro_flag.ChSolver
+                    },
+                    {
+                        where: { ChFlag: hash }
+                    }
+                );
+
                 return true;
             }
         }
@@ -293,4 +312,19 @@ exports.FindUser = async function FindUser(req) {
     } else {
         return false;
     }
+};
+exports.CheckSolveListNull = function CheckSolveListNull(params) {
+    const { ChID } = params;
+    if (!ChID) {
+        return true;
+    } else {
+        return false;
+    }
+};
+exports.GetChallengeSolverList = async function GetChallengeSolverList(params) {
+    const data = await solver_table.findAll({
+        attributes: ["ID", "created_at"],
+        where: { ChID: params.ChID }
+    });
+    return data;
 };

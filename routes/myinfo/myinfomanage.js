@@ -65,22 +65,21 @@ exports.myinfomanage = async function myinfomanage(req) {
 };
 exports.myinfoupdate = async function myinfoupdate(req) {
     try {
-        ID = req.user.ID;
+        const ID = req.user.ID;
         //await LoginManage.WriteLastIP(req); 합병하면 푸셈
-        const { Nick, Comment, Name, StudentID, Email, Belong } = req.body;
+        // const { Nick, Comment, Name, StudentID, Email, Belong } = req.body;
+        const { Comment } = req.body;
+        console.log(Comment);
         await user_info.update(
             {
-                Nick,
-                Comment,
-                Name,
-                StudentID,
-                Email,
-                Belong
+                Comment
             },
             { where: { ID } }
         );
+        return true;
     } catch (err) {
         console.log(err);
+        return false;
     }
 };
 exports.myinfoupdatepw = async function myinfoupdatepw(req) {

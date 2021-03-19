@@ -9,5 +9,10 @@ router.get("/", (req, res, next) => {
     res.clearCookie("connect.sid");
     res.status(200).send('{"Result" : "Fail"}');
 });
-
+router.get("/init", (req, res, next) => {
+    req.logout();
+    req.session.destroy();
+    res.clearCookie("connect.sid");
+    res.status(200).send('{"Result" : "Fail"}');
+});
 module.exports = router;

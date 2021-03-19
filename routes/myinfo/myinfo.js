@@ -58,14 +58,17 @@ router.get("/", async (req, res, next) => {
 });
 router.post("/myinfoupdate", async (req, res, next) => {
     try {
-        if (!req.body.PassWord) {
-            await Myinfomanage.myinfoupdate(req);
-            return res.status(201).send('{"Result":"OK"}');
-        } else if (req.user.PassWord < 8 || req.user.Password > 20) {
-            return res.status(200).send('{"Result" : "Fail"}');
-        } else if (req.user.password >= 8 || req.user.Password <= 20) {
-            await Myinfomanage.myinfoupdatepw(req);
-            return res.status(201).send('{"Result":"OK"}');
+        if (req.body.Comment) {
+            if (req.body.Comment.length <= 50) {
+                const Result = await Myinfomanage.myinfoupdate(req);
+                if (Result) {
+                    return res.status(201).send('{"Result":"OK"}');
+                }
+            } else {
+                return res.status(201).send('{"Result":"Wrong Length"}');
+            }
+        } else {
+            return res.status(201).send('{"Result":"Fail"}');
         }
     } catch (err) {
         return res.status(400).send('{"Error" : "Fail"}');

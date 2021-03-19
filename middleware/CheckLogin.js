@@ -12,6 +12,7 @@ exports.isNotLoggedIn = (req, res, next) => {
     if (!req.isAuthenticated()) {
         next();
     } else {
+        console.log("already");
         req.logout();
         req.session.destroy();
         res.clearCookie("connect.sid");
