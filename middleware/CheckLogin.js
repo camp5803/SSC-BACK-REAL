@@ -12,10 +12,6 @@ exports.isNotLoggedIn = (req, res, next) => {
     if (!req.isAuthenticated()) {
         next();
     } else {
-        console.log("already");
-        req.logout();
-        req.session.destroy();
-        res.clearCookie("connect.sid");
-        LoginManage.AlreadyLoginHandler(req, res, next);
+        return res.status(200).send('{"Error" : "Already Logged in"}');
     }
 };
