@@ -84,6 +84,7 @@ exports.AlreadyLoginHandler = async function AlreadyLoginHandler(
                         ProfileImg: req.user.dataValues.profilepicture
                     }
                 };
+                console.log(req.user);
                 await WriteLastIP(req);
                 return res.status(200).send(Result);
             }

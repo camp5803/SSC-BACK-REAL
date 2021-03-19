@@ -12,9 +12,13 @@ module.exports = () => {
             },
             async (ID, PassWord, done) => {
                 try {
+                    console.log("들어옴");
                     const exUser = await user_info.findOne({ where: { ID } });
                     if (exUser) {
-                        const result = await bcrypt.compare(PassWord, exUser.PassWord);
+                        const result = await bcrypt.compare(
+                            PassWord,
+                            exUser.PassWord
+                        );
                         if (result) {
                             done(null, exUser);
                         } else {
