@@ -6,9 +6,9 @@ var path = require("path");
 var mime = require("mime");
 
 router.get("/:file_name", function (req, res, next) {
-    var upload_folder = "C:\\SSC-BACK-REAL\\uploads\\";
+    var upload_folder = "/mnt/c/SSC-back-master/uploads/";
     var file = upload_folder + req.params.file_name; // ex) /upload/files/sample.txt
-
+    console.log(file);
     try {
         if (fs.existsSync(file)) {
             // 파일이 존재하는지 체크
