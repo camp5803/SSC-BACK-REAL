@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 const rankManage = require("./../rank/rankmanage");
 const Myinfomanage = require("./myinfomanage");
-
+const { isLoggedIn } = require("../../middleware/CheckLogin");
+router.use(isLoggedIn); // 로그인 확인
 router.get("/", async (req, res, next) => {
     try {
         if (req.user.ID) {

@@ -1,6 +1,8 @@
 const express = require("express");
 const rankManage = require("./rankmanage");
 const router = express.Router();
+const { isLoggedIn } = require("../../middleware/CheckLogin");
+router.use(isLoggedIn); // 로그인 확인
 router.get("/getrank", async (req, res, next) => {
     try {
         const rank = await rankManage.rank();
@@ -10,7 +12,7 @@ router.get("/getrank", async (req, res, next) => {
     }
 });
 
-router.get("/",async(req,res,next)=>{
-    res.send('asdffff');
-})
+router.get("/", async (req, res, next) => {
+    res.send("asdffff");
+});
 module.exports = router;
