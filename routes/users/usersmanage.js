@@ -1,6 +1,6 @@
 const user_info = require("../../models/user_info");
 const solver_table = require("../../models/solver_table");
-const LoginManage = require("./../Login/LoginManage");
+const LoginManage = require("../Login/LoginManage");
 const wargame_info = require("../../models/wargame_info");
 const { QueryTypes } = require("sequelize");
 const Sequelize = require("sequelize");
@@ -20,9 +20,10 @@ const sequelize = new Sequelize("saessak", "saessakdb", "~!saessak2021~!", {
 
 exports.myinfomanage = async function myinfomanage(req) {
     try {
-        ID = req.user.ID;
+        const name = req.params.name;
+       
         const myinfo = await user_info.findOne({
-            where: { ID },
+            where: { ID:name },
             attributes: [
                 "Nick",
                 "profilepicture",
@@ -34,12 +35,11 @@ exports.myinfomanage = async function myinfomanage(req) {
                 "Score"
             ]
         });
-
+        
         const solves = await solver_table.findAll({
-            where: { ID },
+            where: { ID:name },
             attributes: ["ChID", "ChCategory"]
         });
-
         if (!solves) {
             return {
                 myinfo: myinfo,
@@ -50,7 +50,7 @@ exports.myinfomanage = async function myinfomanage(req) {
         const solvelist = await sequelize.query(
             "SELECT ChTitle,ChCategory,ChScore FROM wargame_info WHERE ChID in (SELECT ChID FROM solver_table where ID = ?)",
             {
-                replacements: [req.user.ID],
+                replacements: [name],
                 type: QueryTypes.SELECT
             }
         );
@@ -64,25 +64,4 @@ exports.myinfomanage = async function myinfomanage(req) {
         console.log(err);
     }
 };
-exports.myinfoupdate = async function myinfoupdate(req) {
-    try {
-        const ID = req.user.ID;
-        //await LoginManage.WriteLastIP(req); 합병하면 푸셈
-        // const { Nick, Comment, Name, StudentID, Email, Belong } = req.body;
-        const { Comment } = req.body;
-
-        await user_info.update(
-            {
-                Comment
-            },
-            { where: { ID } }
-        );
-        return true;
-    } catch (err) {
-        console.log(err);
-        return false;
-    }
-};
-exports.myinfoupdatepw = async function myinfoupdatepw(req) {
-    const { PassWord } = req.body;
-};
+ 

@@ -1,4 +1,5 @@
 const { ReturnUserInfo } = require("../../middleware/ReturnUserInfo");
+const permit  = require("../../middleware/Returnadmincheck")
 const express = require("express");
 const wargame_info = require("../../models/wargame_info");
 const lecture_comment = require("../../models/lecture_Comment");
@@ -9,8 +10,13 @@ const SetUpload = wargameManage.SetMulter();
 /// 문제들 목록 데이터 가져오는 API
 router.get("/wargamelist", async (req, res, next) => {
     try {
+        if (wargameManage.CheckWrongAccess(req)) {
+            return res.status(404).send('{"Error" : "Wrong Access"}');
+        }   
+        if (await permit.Returnadmincheck(req)){
+            return res.status(404).send('{"Error" : "Not Page"}');
+        }   
         const problems = await wargameManage.datalist();
-
         // const flag = await wargame_info.findOne({ where: { Chflag: hash } });
         // res.json(flag.ChScore);
         if (problems) {
@@ -27,6 +33,12 @@ router.get("/wargamelist", async (req, res, next) => {
 // upload.fields( [{name:"img1"} ] 일단 파일업로드 주석처리
 router.post("/upload", async (req, res, next) => {
     try {
+        if (wargameManage.CheckWrongAccess(req)) {
+            return res.status(404).send('{"Error" : "Wrong Access"}');
+        }   
+        if (await permit.Returnadmincheck(req)){
+            return res.status(404).send('{"Error" : "Not Page"}');
+        }   
         if (wargameManage.CheckNull(req)) {
             return res.status(400).send('{"Error" : "Find Null"}');
         }
@@ -47,7 +59,13 @@ router.post("/upload", async (req, res, next) => {
 /// 문제 삭제 API
 router.post("/pro_delete", async (req, res, next) => {
     try {
-        var idx = req.body.idx; //삭제할 번호
+        if (wargameManage.CheckWrongAccess(req)) {
+            return res.status(404).send('{"Error" : "Wrong Access"}');
+        }   
+        if (await permit.Returnadmincheck(req)){
+            return res.status(404).send('{"Error" : "Not Page"}');
+        }   
+        const idx = req.body.idx; //삭제할 번호
         // 특정 문제 삭제
         if (wargameManage.pdelete(idx)) {
             await wargame_info.destroy({ where: { Chid: idx } });
@@ -63,12 +81,16 @@ router.post("/pro_delete", async (req, res, next) => {
 /// 문제 수정 API
 router.post("/pro_update", async (req, res, next) => {
     try {
+        if (wargameManage.CheckWrongAccess(req)) {
+            return res.status(404).send('{"Error" : "Wrong Access"}');
+        }   
+        if (await permit.Returnadmincheck(req)){
+            return res.status(404).send('{"Error" : "Not Page"}');
+        }   
         if (wargameManage.CheckNull(req)) {
             return res.status(400).send('{"Error" : "Find Null"}');
         }
-        if (wargameManage.CheckWrongAccess(req)) {
-            return res.status(400).send('{"Error" : "Wrong Access"}');
-        } else {
+         else {
             if (await wargameManage.wargame_update(req)) {
                 return res.status(201).redirect("/");
             }
@@ -82,14 +104,18 @@ router.post("/pro_update", async (req, res, next) => {
 /// 문제 댓글 추가 API
 router.post("/pro_comment", async (req, res, next) => {
     try {
+        if (wargameManage.CheckWrongAccess(req)) {
+            return res.status(404).send('{"Error" : "Wrong Access"}');
+        }   
+        if (await permit.Returnadmincheck(req)){
+            return res.status(404).send('{"Error" : "Not Page"}');
+        }   
         if (!wargameManage.CheckNullcomment(req)) {
             return res.status(400).send('{"Error" : "Find Null"}');
         } else if (await wargameManage.addcomment(req)) {
             return res.status(201).redirect("/");
         }
-        if (wargameManage.CheckWrongAccess(req)) {
-            return res.status(400).send('{"Error" : "Wrong Access"}');
-        }
+        
     } catch (error) {
         console.error(error);
         return res.status(200).send('{"Error":"Wrong"}');
@@ -116,9 +142,15 @@ router.post("/com_update", async (req, res, next) => {
 
 /// 문제 댓글 삭제 API
 router.post("/com_delete", async (req, res, next) => {
-    var idx = req.body.idx; //삭제할 번호
+    const idx2 = req.body.idx; //삭제할 번호
     try {
-        if (wargameManage.commentdelete(idx)) {
+        if (wargameManage.CheckWrongAccess(req)) {
+            return res.status(404).send('{"Error" : "Wrong Access"}');
+        }   
+        if (await permit.Returnadmincheck(req)){
+            return res.status(404).send('{"Error" : "Not Page"}');
+        }   
+        if (wargameManage.commentdelete(idx2)) {
             return res.status(400).send('{"Error" : "Find Null"}');
         } else {
             return res.status(201).redirect("/");
@@ -151,7 +183,7 @@ router.post("/prosolve", async (req, res, next) => {
         // if (wargameManage.CheckWrongAccess(req)) {
         //     return res.status(400).send('{"Error" : "Wrong Access"}');
         // }
-
+        
         if (await wargameManage.submitflag(req)) {
             return res.status(200).send('{"Result":"Correct"}');
         } else {
