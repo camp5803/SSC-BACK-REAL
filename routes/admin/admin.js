@@ -18,7 +18,7 @@ router.get('/', async   (req,res,next)=>{
             return res.status(400).send('{"Error" : "Wrong Access"}');
         }
         if (await permit.Returnadmincheck(req)){
-            return res.status(400).send('{"Error" : "Not admin"}');
+            return res.status(400).send('{"Error" : "Not Page"}');
         }   
         return res.status(200).send('{"Result" : "Hi Admin~"}');
     }
@@ -35,7 +35,7 @@ router.post('/userinfo', async(req,res,next)=>{
                 return res.status(400).send('{"Error" : "Wrong Access"}');
             }   
             if (await permit.Returnadmincheck(req)){
-                return res.status(400).send('{"Error" : "Not admin"}');
+                return res.status(400).send('{"Error" : "Not Page"}');
             }   
             userinfo = await user_info.findAll();
             if (userinfo) {
@@ -56,7 +56,7 @@ router.post('/user', async(req,res,next)=>{
                 return res.status(400).send('{"Error" : "Wrong Access"}');
             }
             if (await permit.Returnadmincheck(req)){
-                return res.status(400).send('{"Error" : "Not admin"}');
+                return res.status(400).send('{"Error" : "Not Page"}');
             } 
             
             const apimyinfo = await adminManage.user(req);
@@ -89,7 +89,7 @@ router.post('/userinfoupdate', async(req,res,next)=>{
             return res.status(400).send('{"Error" : "Wrong Access"}');
         }
         if (await permit.Returnadmincheck(req)){
-            return res.status(400).send('{"Error" : "Not admin"}');
+            return res.status(400).send('{"Error" : "Not Page"}');
         } 
         if (req.body){  
             await adminManage.myinfoupdate(req);
@@ -110,7 +110,7 @@ try{
         return res.status(400).send('{"Error" : "Wrong Access"}');
     }
     if (permit.Returnadmincheck()){
-        return res.status(400).send('{"Error" : "Not admin"}');
+        return res.status(400).send('{"Error" : "Not Page"}');
     }   
     if (wargameManage.CheckNull(req)) {
         return res.status(400).send('{"Error" : "Find Null"}');
@@ -132,7 +132,7 @@ router.post('/api/wargamemodify', async(req,res,next)=>{
             return res.status(400).send('{"Error" : "Wrong Access"}');
         }
         if (permit.Returnadmincheck()){
-            return res.status(400).send('{"Error" : "Not admin"}');
+            return res.status(400).send('{"Error" : "Not Page"}');
         }   
         if (wargameManage.CheckNull(req)) {
             return res.status(400).send('{"Error" : "Find Null"}');
@@ -154,7 +154,7 @@ router.post('/api/wargamedelete', async(req,res,next)=>{
             return res.status(400).send('{"Error" : "Wrong Access"}');
         }
         if (permit.Returnadmincheck()){
-            return res.status(400).send('{"Error" : "Not admin"}');
+            return res.status(400).send('{"Error" : "Not Page"}');
         }   
         if (wargameManage.pdelete(req)) {
             return res.status(400).send('{"Error" : "Find Null"}');
@@ -178,7 +178,7 @@ router.post('/CTF', async(req,res,next)=>{
                 return res.status(400).send('{"Error" : "Wrong Access"}');
             }   
             if (await permit.Returnadmincheck(req)){
-                return res.status(400).send('{"Error" : "Not admin"}');
+                return res.status(400).send('{"Error" : "Not Page"}');
             }  
             console.log("month") 
             userinfo = await user_info.findAll();
@@ -202,7 +202,7 @@ router.post('/api/CTFadd', async(req,res,next)=>{
             return res.status(400).send('{"Error" : "Wrong Access"}');
         }
         if (permit.Returnadmincheck()){
-            return res.status(400).send('{"Error" : "Not admin"}');
+            return res.status(400).send('{"Error" : "Not Page"}');
         }   
         if (CTFManage.CheckNull(req)) {
             return res.status(400).send('{"Error" : "Find Null"}');
@@ -224,7 +224,7 @@ router.post('/api/CTFmodify', async(req,res,next)=>{
                 return res.status(400).send('{"Error" : "Wrong Access"}');
             }
             if (permit.Returnadmincheck()){
-                return res.status(400).send('{"Error" : "Not admin"}');
+                return res.status(400).send('{"Error" : "Not Page"}');
             }   
             if (CTFManage.CheckNull(req)) {
                 return res.status(400).send('{"Error" : "Find Null"}');
@@ -246,7 +246,7 @@ router.post('/api/CTFdelete', async(req,res,next)=>{
             return res.status(400).send('{"Error" : "Wrong Access"}');
         }
         if (permit.Returnadmincheck()){
-            return res.status(400).send('{"Error" : "Not admin"}');
+            return res.status(400).send('{"Error" : "Not Page"}');
         }   
         if (CTFManage.pdelete(req)) {
             return res.status(400).send('{"Error" : "Find Null"}');

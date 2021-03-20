@@ -50,6 +50,9 @@ exports.proinfo = async function proinfo(req) {
 
 exports.submitflag = async function submitflag(req) {
     try {
+        if (!req.user.ID){
+            return false;
+        }
         const { Flag, ChID } = req.body;
         if (!Flag || !ChID) {
             return false;
