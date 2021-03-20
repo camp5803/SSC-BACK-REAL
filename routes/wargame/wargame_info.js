@@ -6,7 +6,11 @@ const wargameManage = require("./wargameManage.js");
 const requestIp = require("request-ip");
 const router = express.Router();
 const SetUpload = wargameManage.SetMulter();
+const { isLoggedIn } = require("../../middleware/CheckLogin");
+router.use(isLoggedIn); // 로그인 확인
 /// 문제들 목록 데이터 가져오는 API
+
+const SetUpload = wargameManage.SetMulter();
 router.get("/wargamelist", async (req, res, next) => {
     try {
         const problems = await wargameManage.datalist();
@@ -24,8 +28,8 @@ router.get("/wargamelist", async (req, res, next) => {
 });
 
 // //  문제 업로드 API
-// upload.fields( [{name:"img1"} ] 일단 파일업로드 주석처리
-router.post("/upload", async (req, res, next) => {
+
+router.post("/upload", SetUpload.single("upload"), async (req, res, next) => {
     try {
         if (wargameManage.CheckNull(req)) {
             return res.status(400).send('{"Error" : "Find Null"}');
@@ -34,7 +38,7 @@ router.post("/upload", async (req, res, next) => {
         //          return res.status(400).send('{"Error" : "Wrong Access"}');
         //      }
         // else{
-        if (await wargameManage.wargame_upload(req)) {
+        if (await wargameManage.wargame_upload(req, req.file)) {
             return res.status(201).send('{"Result":"OK"}');
         }
         //     }

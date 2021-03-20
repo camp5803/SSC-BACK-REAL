@@ -11,6 +11,25 @@ const path = require("path");
 const bcrypt = require("bcrypt");
 
 const salt = bcrypt.genSaltSync(10);
+
+exports.SetMulter = function SetMulter() {
+    return multer({
+        storage: multer.diskStorage({
+            destination(req, file, done) {
+                done(null, "C:\\SSC-back\\uploads");
+            },
+            filename(req, file, done) {
+                const ext = path.extname(file.originalname);
+                done(
+                    null,
+                    path.basename(file.originalname, ext) + Date.now() + ext
+                );
+            }
+        }),
+        limits: { fileSize: 10 * 1024 * 1024 }
+    });
+};
+
 exports.proinfo = async function proinfo(req) {
     const { ID } = req.user;
 
@@ -167,7 +186,7 @@ exports.SetMulter = function SetMulter() {
     });
 };
 
-exports.wargame_upload = async function wargame_upload(req) {
+exports.wargame_upload = async function wargame_upload(req, file) {
     try {
         const {
             ChCategory,
@@ -180,18 +199,35 @@ exports.wargame_upload = async function wargame_upload(req) {
 
         ChAuthor = req.user.ID;
         const Chhash = bcrypt.hashSync(ChFlag, salt);
-        await wargame_info.create({
-            ChCategory,
-            ChTitle,
-            ChDescription,
-            ChScore,
-            ChLevel,
-            ChAuthor,
-            ChFlag: Chhash,
-            ChSalt: salt
-            // ChDirectory1: req.files.file1[0].path
-        });
-        return true;
+        if (file) {
+            const UploadResult = JSON.parse(JSON.stringify(file));
+
+            await wargame_info.create({
+                ChCategory,
+                ChTitle,
+                ChDirectory: UploadResult.filename,
+                ChDescription,
+                ChScore,
+                ChLevel,
+                ChAuthor,
+                ChFlag: Chhash,
+                ChSalt: salt
+                // ChDirectory1: req.files.file1[0].path
+            });
+            return true;
+        } else {
+            await wargame_info.create({
+                ChCategory,
+                ChTitle,
+                ChDescription,
+                ChScore,
+                ChLevel,
+                ChAuthor,
+                ChFlag: Chhash,
+                ChSalt: salt
+                // ChDirectory1: req.files.file1[0].path
+            });
+        }
     } catch (err) {
         console.log(err);
         return false;
