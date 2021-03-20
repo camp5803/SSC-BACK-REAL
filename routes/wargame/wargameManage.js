@@ -16,7 +16,7 @@ exports.SetMulter = function SetMulter() {
     return multer({
         storage: multer.diskStorage({
             destination(req, file, done) {
-                done(null, "C:\\SSC-back\\uploads");
+                done(null, "/mnt/c/SSC-back-master/uploads");
             },
             filename(req, file, done) {
                 const ext = path.extname(file.originalname);
@@ -172,7 +172,7 @@ exports.SetMulter = function SetMulter() {
     return multer({
         storage: multer.diskStorage({
             destination(req, file, done) {
-                done(null, "C:\\SSC-back\\uploads");
+                done(null, "/mnt/c/SSC-back-master/uploads");
             },
             filename(req, file, done) {
                 const ext = path.extname(file.originalname);
@@ -196,12 +196,12 @@ exports.wargame_upload = async function wargame_upload(req, file) {
             ChFlag,
             ChLevel
         } = req.body;
-
+        console.log("123");
         ChAuthor = req.user.ID;
         const Chhash = bcrypt.hashSync(ChFlag, salt);
         if (file) {
             const UploadResult = JSON.parse(JSON.stringify(file));
-
+            console.log("UploadResult.filename");
             await wargame_info.create({
                 ChCategory,
                 ChTitle,
@@ -247,6 +247,7 @@ exports.wargame_update = async function wargame_update(req) {
     });
 };
 exports.CheckNull = function CheckNull(req) {
+    console.log(req.body);
     const {
         ChCategory,
         ChTitle,

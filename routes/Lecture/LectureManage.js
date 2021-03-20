@@ -11,7 +11,7 @@ exports.SetMulter = function SetMulter() {
     return multer({
         storage: multer.diskStorage({
             destination(req, file, done) {
-                done(null, "C:\\SSC-back\\uploads");
+                done(null, "/mnt/c/SSC-back-master/uploads");
             },
             filename(req, file, done) {
                 const ext = path.extname(file.originalname);

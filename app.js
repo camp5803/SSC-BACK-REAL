@@ -82,6 +82,7 @@ app.use("/api/lecture", Lecture);
 app.use("/api/auth", Auth);
 app.use("/api/uploads", express.static("uploads"));
 app.use("/api/profile", express.static("profilepicture"));
+app.use("/api/lectureimg", express.static("lectureimg"));
 app.use("/api/wargame", wargame_info);
 app.use("/api/admin", admin);
 app.use("/api/rank", rank);
@@ -93,10 +94,8 @@ app.use("/api/LectureFiledownload", LectureFiledownload);
 //testasdadsasasdasdasd
 /* ROUTERS */
 
-app.get("/", (req, res) => {
-    res.send(req.user);
-});
 app.use((err, req, res, next) => {
+    console.log(err);
     res.status(400).send('{"Error" : "Fail"}');
 });
 module.exports = app;
