@@ -17,6 +17,11 @@ module.exports = class solver_table extends Sequelize.Model {
                     type: Sequelize.STRING(30),
                     allowNull: false
                 },
+                Nick: {
+                    type: Sequelize.STRING(45),
+                    allowNull: false,
+                    unique: true
+                },
                 ChCategory: {
                     type: Sequelize.STRING(45),
                     allowNull: false

@@ -50,7 +50,7 @@ exports.proinfo = async function proinfo(req) {
 
 exports.submitflag = async function submitflag(req) {
     try {
-        if (!req.user.ID){
+        if (!req.user.ID) {
             return false;
         }
         const { Flag, ChID } = req.body;
@@ -114,6 +114,7 @@ exports.submitflag = async function submitflag(req) {
                 await solver_table.create({
                     ChID: pro_flag.ChID,
                     ID,
+                    Nick: req.user.Nick,
                     created_at: Date.now(),
                     ChCategory: pro_flag.ChCategory
                 });
@@ -199,12 +200,12 @@ exports.wargame_upload = async function wargame_upload(req, file) {
             ChFlag,
             ChLevel
         } = req.body;
-        console.log("123");
+
         ChAuthor = req.user.ID;
         const Chhash = bcrypt.hashSync(ChFlag, salt);
         if (file) {
             const UploadResult = JSON.parse(JSON.stringify(file));
-            console.log("UploadResult.filename");
+
             await wargame_info.create({
                 ChCategory,
                 ChTitle,
@@ -363,7 +364,7 @@ exports.CheckSolveListNull = function CheckSolveListNull(params) {
 };
 exports.GetChallengeSolverList = async function GetChallengeSolverList(params) {
     const data = await solver_table.findAll({
-        attributes: ["ID", "created_at"],
+        attributes: ["Nick", "created_at"],
         where: { ChID: params.ChID }
     });
     return data;
