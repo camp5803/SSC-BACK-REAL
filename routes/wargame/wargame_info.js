@@ -1,5 +1,5 @@
 const { ReturnUserInfo } = require("../../middleware/ReturnUserInfo");
-const permit  = require("../../middleware/Returnadmincheck")
+const permit = require("../../middleware/Returnadmincheck");
 const express = require("express");
 const wargame_info = require("../../models/wargame_info");
 const lecture_comment = require("../../models/lecture_Comment");
@@ -15,10 +15,10 @@ router.get("/wargamelist", async (req, res, next) => {
     try {
         if (wargameManage.CheckWrongAccess(req)) {
             return res.status(404).send('{"Error" : "Wrong Access"}');
-        }   
-        if (await permit.Returnadmincheck(req)){
-            return res.status(404).send('{"Error" : "Not Page"}');
-        }   
+        }
+        // if (await permit.Returnadmincheck(req)){
+        //     return res.status(404).send('{"Error" : "Not Page"}');
+        // }
         const problems = await wargameManage.datalist();
         // const flag = await wargame_info.findOne({ where: { Chflag: hash } });
         // res.json(flag.ChScore);
@@ -36,16 +36,6 @@ router.get("/wargamelist", async (req, res, next) => {
 
 router.post("/upload", SetUpload.single("upload"), async (req, res, next) => {
     try {
-<<<<<<< HEAD
-        if (wargameManage.CheckWrongAccess(req)) {
-            return res.status(404).send('{"Error" : "Wrong Access"}');
-        }   
-        if (await permit.Returnadmincheck(req)){
-            return res.status(404).send('{"Error" : "Not Page"}');
-        }   
-=======
-        console.log("123");
->>>>>>> c7721b7fc2957243d6c84701c9adcc8a14eba8ea
         if (wargameManage.CheckNull(req)) {
             return res.status(400).send('{"Error" : "Find Null"}');
         }
@@ -68,10 +58,10 @@ router.post("/pro_delete", async (req, res, next) => {
     try {
         if (wargameManage.CheckWrongAccess(req)) {
             return res.status(404).send('{"Error" : "Wrong Access"}');
-        }   
-        if (await permit.Returnadmincheck(req)){
+        }
+        if (await permit.Returnadmincheck(req)) {
             return res.status(404).send('{"Error" : "Not Page"}');
-        }   
+        }
         const idx = req.body.idx; //삭제할 번호
         // 특정 문제 삭제
         if (wargameManage.pdelete(idx)) {
@@ -90,14 +80,13 @@ router.post("/pro_update", async (req, res, next) => {
     try {
         if (wargameManage.CheckWrongAccess(req)) {
             return res.status(404).send('{"Error" : "Wrong Access"}');
-        }   
-        if (await permit.Returnadmincheck(req)){
+        }
+        if (await permit.Returnadmincheck(req)) {
             return res.status(404).send('{"Error" : "Not Page"}');
-        }   
+        }
         if (wargameManage.CheckNull(req)) {
             return res.status(400).send('{"Error" : "Find Null"}');
-        }
-         else {
+        } else {
             if (await wargameManage.wargame_update(req)) {
                 return res.status(201).redirect("/");
             }
@@ -113,16 +102,15 @@ router.post("/pro_comment", async (req, res, next) => {
     try {
         if (wargameManage.CheckWrongAccess(req)) {
             return res.status(404).send('{"Error" : "Wrong Access"}');
-        }   
-        if (await permit.Returnadmincheck(req)){
+        }
+        if (await permit.Returnadmincheck(req)) {
             return res.status(404).send('{"Error" : "Not Page"}');
-        }   
+        }
         if (!wargameManage.CheckNullcomment(req)) {
             return res.status(400).send('{"Error" : "Find Null"}');
         } else if (await wargameManage.addcomment(req)) {
             return res.status(201).redirect("/");
         }
-        
     } catch (error) {
         console.error(error);
         return res.status(200).send('{"Error":"Wrong"}');
@@ -153,10 +141,10 @@ router.post("/com_delete", async (req, res, next) => {
     try {
         if (wargameManage.CheckWrongAccess(req)) {
             return res.status(404).send('{"Error" : "Wrong Access"}');
-        }   
-        if (await permit.Returnadmincheck(req)){
+        }
+        if (await permit.Returnadmincheck(req)) {
             return res.status(404).send('{"Error" : "Not Page"}');
-        }   
+        }
         if (wargameManage.commentdelete(idx2)) {
             return res.status(400).send('{"Error" : "Find Null"}');
         } else {
@@ -190,7 +178,7 @@ router.post("/prosolve", async (req, res, next) => {
         // if (wargameManage.CheckWrongAccess(req)) {
         //     return res.status(400).send('{"Error" : "Wrong Access"}');
         // }
-        
+
         if (await wargameManage.submitflag(req)) {
             return res.status(200).send('{"Result":"Correct"}');
         } else {

@@ -21,9 +21,9 @@ const sequelize = new Sequelize("saessak", "saessakdb", "~!saessak2021~!", {
 exports.myinfomanage = async function myinfomanage(req) {
     try {
         const name = req.params.name;
-       
+
         const myinfo = await user_info.findOne({
-            where: { ID:name },
+            where: { Nick: name },
             attributes: [
                 "Nick",
                 "profilepicture",
@@ -35,9 +35,9 @@ exports.myinfomanage = async function myinfomanage(req) {
                 "Score"
             ]
         });
-        
+
         const solves = await solver_table.findAll({
-            where: { ID:name },
+            where: { Nick: name },
             attributes: ["ChID", "ChCategory"]
         });
         if (!solves) {
@@ -48,7 +48,7 @@ exports.myinfomanage = async function myinfomanage(req) {
         }
 
         const solvelist = await sequelize.query(
-            "SELECT ChTitle,ChCategory,ChScore FROM wargame_info WHERE ChID in (SELECT ChID FROM solver_table where ID = ?)",
+            "SELECT ChTitle,ChCategory,ChScore FROM wargame_info WHERE ChID in (SELECT ChID FROM solver_table where Nick = ?)",
             {
                 replacements: [name],
                 type: QueryTypes.SELECT
@@ -64,4 +64,3 @@ exports.myinfomanage = async function myinfomanage(req) {
         console.log(err);
     }
 };
- 
