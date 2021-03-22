@@ -22,7 +22,7 @@ exports.SetMulter = function SetMulter() {
     return multer({
         storage: multer.diskStorage({
             destination(req, file, done) {
-                done(null, "C:\\SSC-BACK-REAL\\profilepicture");
+                done(null, "/mnt/c/SSC-back-master/profilepicture");
             },
             filename(req, file, done) {
                 const ext = path.extname(file.originalname);
@@ -106,7 +106,6 @@ exports.myinfoupdatepw = async function myinfoupdatepw(req) {
 exports.myinfoprofileimgupdate = async function myinfoprofileimgupdate(req) {
     if (req.file) {
         const UploadResult = JSON.parse(JSON.stringify(req.file));
-
         const result = await user_info.update(
             {
                 profilepicture: "/" + UploadResult.filename
@@ -116,7 +115,7 @@ exports.myinfoprofileimgupdate = async function myinfoprofileimgupdate(req) {
         const updateresult = await user_info.findOne({
             where: { ID: req.user.ID }
         });
-        console.log(updateresult);
+
         if (result) {
             const Result = {
                 Result: "Success",
@@ -127,7 +126,7 @@ exports.myinfoprofileimgupdate = async function myinfoprofileimgupdate(req) {
                     ProfileImg: updateresult.dataValues.profilepicture
                 }
             };
-            console.log(Result);
+
             return Result;
         } else {
             return false;

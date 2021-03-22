@@ -60,7 +60,6 @@ exports.AlreadyLoginHandler = async function AlreadyLoginHandler(
     res,
     next
 ) {
-    console.log("inalreadylogin");
     passport.authenticate("local", async (authError, user, info) => {
         if (authError) {
             console.error(authError);
@@ -84,7 +83,7 @@ exports.AlreadyLoginHandler = async function AlreadyLoginHandler(
                         ProfileImg: req.user.dataValues.profilepicture
                     }
                 };
-                console.log(req.user);
+
                 await WriteLastIP(req);
                 return res.status(200).send(Result);
             }
