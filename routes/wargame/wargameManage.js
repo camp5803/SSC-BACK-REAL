@@ -251,7 +251,6 @@ exports.wargame_update = async function wargame_update(req) {
     });
 };
 exports.CheckNull = function CheckNull(req) {
-    console.log(req.body);
     const {
         ChCategory,
         ChTitle,

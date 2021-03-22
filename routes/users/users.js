@@ -4,22 +4,21 @@ const rankManage = require("../rank/rankmanage");
 const usersmanage = require("./usersmanage");
 
 router.get("/", async (req, res, next) => {
-    try {   
-            return res.status(200).send('{"Error":"not user"}');
-        }
-    catch (err) {
+    try {
+        return res.status(200).send('{"Error":"not user"}');
+    } catch (err) {
         return res.status(400).send('{"Error" : "Fail"}');
     }
 });
 
 router.get("/:name", async (req, res, next) => {
     try {
-        if (!req.user.ID || !req.params.name){
+        if (!req.user.ID || !req.params.name) {
             //방어
         }
-        if (req.user.ID) {      
+        if (req.user.ID) {
             const apimyinfo = await usersmanage.myinfomanage(req);
-            console.log(apimyinfo)
+
             if (apimyinfo) {
                 //              myinfo["solves"][0].ChCategory
                 const Categories = {
@@ -68,10 +67,5 @@ router.get("/:name", async (req, res, next) => {
         return res.status(400).send('{"Error" : "Fail"}');
     }
 });
-
-
-
-
-
 
 module.exports = router;
