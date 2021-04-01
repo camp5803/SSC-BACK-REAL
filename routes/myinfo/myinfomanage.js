@@ -6,6 +6,7 @@ const { QueryTypes } = require("sequelize");
 const Sequelize = require("sequelize");
 const multer = require("multer");
 const path = require("path");
+const randomstring = require("randomstring");
 const sequelize = new Sequelize("saessak", "saessakdb", "~!saessak2021~!", {
     host: "211.229.250.147",
     dialect: "mysql",
@@ -18,7 +19,7 @@ const sequelize = new Sequelize("saessak", "saessakdb", "~!saessak2021~!", {
     logging: false,
     operatorsAliases: false
 });
-exports.SetMulter = function SetMulter() {
+exports.SetMulter = function SetMulter(res, req, next) {
     return multer({
         storage: multer.diskStorage({
             destination(req, file, done) {
@@ -26,12 +27,21 @@ exports.SetMulter = function SetMulter() {
             },
             filename(req, file, done) {
                 const ext = path.extname(file.originalname);
-                done(
-                    null,
-                    path.basename(file.originalname, ext) + Date.now() + ext
-                );
+                done(null, randomstring.generate(32) + ext);
             }
         }),
+        fileFilter: function (req, file, callback) {
+            var ext = path.extname(file.originalname);
+            if (
+                ext !== ".png" &&
+                ext !== ".jpg" &&
+                ext !== ".gif" &&
+                ext !== ".jpeg"
+            ) {
+                return callback(null, false);
+            }
+            callback(null, true);
+        },
         limits: { fileSize: 10 * 1024 * 1024 }
     });
 };
@@ -124,12 +134,37 @@ exports.myinfoprofileimgupdate = async function myinfoprofileimgupdate(req) {
                     Nick: req.user.dataValues.Nick,
                     Email: req.user.dataValues.Email,
                     ProfileImg: updateresult.dataValues.profilepicture
-                }
+                },
+                ChangeResult: "Success"
             };
 
             return Result;
         } else {
             return false;
         }
+    }
+};
+exports.myinfoprofileimginit = async function myinfoprofileimginit(req) {
+    const result = await user_info.update(
+        {
+            profilepicture: "/default.png"
+        },
+        { where: { ID: req.user.ID } }
+    );
+
+    if (result) {
+        const Result = {
+            Result: "Success",
+            UserInfo: {
+                ID: req.user.dataValues.ID,
+                Nick: req.user.dataValues.Nick,
+                Email: req.user.dataValues.Email,
+                ProfileImg: "/default.png"
+            },
+            ChangeResult: "Success"
+        };
+        return Result;
+    } else {
+        return false;
     }
 };

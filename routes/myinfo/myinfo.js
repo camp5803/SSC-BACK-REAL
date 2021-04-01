@@ -93,6 +93,45 @@ router.post(
                 } else {
                     return res.status(200).send('{"Error" : "Fail"}');
                 }
+            } else {
+                const result = {
+                    Result: "Success",
+                    UserInfo: {
+                        ID: req.user.dataValues.ID,
+                        Nick: req.user.dataValues.Nick,
+                        Email: req.user.dataValues.Email,
+                        ProfileImg: req.user.dataValues.profilepicture
+                    },
+                    ChangeResult: "Fail"
+                };
+                return res.status(200).send(result);
+            }
+        } catch (err) {
+            return res.status(400).send('{"Error" : "Fail"}');
+        }
+    }
+);
+
+router.get(
+    "/profileimginit",
+    SetUpload.single("upload"),
+    async (req, res, next) => {
+        try {
+            const result = await Myinfomanage.myinfoprofileimginit(req);
+            if (result) {
+                return res.status(201).send(result);
+            } else {
+                const result = {
+                    Result: "Success",
+                    UserInfo: {
+                        ID: req.user.dataValues.ID,
+                        Nick: req.user.dataValues.Nick,
+                        Email: req.user.dataValues.Email,
+                        ProfileImg: req.user.dataValues.profilepicture
+                    },
+                    ChangeResult: "Fail"
+                };
+                return res.status(200).send(result);
             }
         } catch (err) {
             return res.status(400).send('{"Error" : "Fail"}');

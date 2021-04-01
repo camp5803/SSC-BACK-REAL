@@ -24,13 +24,7 @@ router.post("/write", SetUpload.single("upload"), async (req, res, next) => {
         //     return res.status(400).send('{"Error" : "Wrong User"}');
         // }
 
-        await LectureManage.InsertLecture(
-            LectureInfoID,
-            LectureTitle,
-            LectureContent,
-            req.file,
-            req.user
-        );
+        await LectureManage.InsertLecture(LectureInfoID, LectureTitle, LectureContent, req.file, req.user);
         return res.status(201).send('{"Result" : "OK"}');
         // return res.status(201).redirect("/");
     } catch (err) {
@@ -39,49 +33,20 @@ router.post("/write", SetUpload.single("upload"), async (req, res, next) => {
     }
 });
 
-router.post(
-    "/modify",
-    SetUpload.fields([{ name: "files" }]),
-    async (req, res, next) => {
-        try {
-            const {
-                LectureID,
-                LectureCategory,
-                LectureTitle,
-                ID,
-                Nick,
-                LectureContent
-            } = req.body;
-
-            if (LectureManage.CheckModifyNull(req.body)) {
-                return res.status(400).send('{"Error" : "Find Null"}');
-            }
-
-            if (await LectureManage.CheckModifyWrongAccess(req.body)) {
-                return res.status(400).send('{"Error" : "Wrong Access"}');
-            }
-
-            if (await LectureManage.FindUser(ID, Nick)) {
-                return res.status(400).send('{"Error" : "Wrong User"}');
-            }
-
-            await LectureManage.ModifyLecture(
-                LectureID,
-                LectureCategory,
-                LectureTitle,
-                ID,
-                Nick,
-                LectureContent,
-                req.files
-            );
-
-            return res.status(201).redirect("/");
-        } catch (err) {
-            console.log(err);
-            return res.status(400).send('{"Error" : "Fail"}');
+router.post("/modify", SetUpload.single("upload"), async (req, res, next) => {
+    try {
+        if (LectureManage.CheckModifyNull(req.body)) {
+            return res.status(400).send('{"Error" : "Find Null"}');
         }
+
+        if (await LectureManage.ModifyLecture(req)) {
+            return res.status(201).send('{"Result" : "OK"}');
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(400).send('{"Error" : "Fail"}');
     }
-);
+});
 
 router.post("/delete", async (req, res, next) => {
     try {
@@ -102,37 +67,26 @@ router.post("/delete", async (req, res, next) => {
     }
 });
 
-router.post(
-    "/addcategory",
-    SetUpload.single("LectureImg"),
-    async (req, res, next) => {
-        try {
-            if (LectureManage.CheckAddLectureCategoryNull(req.body)) {
-                return res.status(200).send('{"Error" : "Find Null"}');
-            }
-            await LectureManage.AddLectureCategory(
-                req.body,
-                "/" + req.file.filename
-            );
-            return res.status(201).send('{"Result" : "OK"}');
-        } catch (err) {
-            console.log(err);
-            return res.status(400).send('{"Error" : "Fail"}');
+router.post("/addcategory", SetUpload.single("LectureImg"), async (req, res, next) => {
+    try {
+        if (LectureManage.CheckAddLectureCategoryNull(req.body)) {
+            return res.status(200).send('{"Error" : "Find Null"}');
         }
+        await LectureManage.AddLectureCategory(req.body, "/" + req.file.filename);
+        return res.status(201).send('{"Result" : "OK"}');
+    } catch (err) {
+        console.log(err);
+        return res.status(400).send('{"Error" : "Fail"}');
     }
-);
+});
 
-router.post(
-    "/uploadimage",
-    SetUpload.single("upload"),
-    async (req, res, next) => {
-        try {
-            res.send("http://localhost:9821/uploads/" + req.file.filename);
-        } catch (err) {
-            res.send("Fail");
-        }
+router.post("/uploadimage", SetUpload.single("upload"), async (req, res, next) => {
+    try {
+        res.send("http://localhost:9821/uploads/" + req.file.filename);
+    } catch (err) {
+        res.send("Fail");
     }
-);
+});
 
 // 강의 카테고리로 해당 카테고리의 강의 목록 가져오기
 router.post("/getlecturelist", async (req, res, next) => {
@@ -156,11 +110,30 @@ router.get("/getlecturecategoryinfo", async (req, res, next) => {
     res.send(Data);
 });
 
+router.get("/getlecturecategoryinfoone/:LectureInfoID", async (req, res, next) => {
+    console.log("123");
+    if (req.params.LectureInfoID) {
+        const Data = await LectureManage.GetLectureInfoOne(req.params.LectureInfoID);
+        res.send(Data);
+    } else {
+        res.status(400).send('{"Error" : "Fail"}');
+    }
+});
+
 router.get("/getlecturedata/:LectureID", async (req, res, next) => {
     const Data = await LectureManage.GetLecture(req.params);
     res.status(200).send(Data);
 });
 
+router.get("/getlecturedataall/:LectureID", async (req, res, next) => {
+    const Data = await LectureManage.GetLectureDataAll(req.params);
+    res.status(200).send(Data);
+});
+
+router.get("/getalllecutrelist", async (req, res, next) => {
+    const Data = await LectureManage.GetLectureAll();
+    res.status(200).send(Data);
+});
 router.post(
     "/addlecturecomment",
     // ApiLimit.CommentApiLimiter,
@@ -234,18 +207,10 @@ router.get("/getlecturecomment/:LectureID", async (req, res, next) => {
 
 router.post("/deletecategory", async (req, res, next) => {
     try {
-        if (
-            await LectureManage.CheckDeleteLectureCategoryNull(
-                req.body.LectureInfoID
-            )
-        ) {
+        if (await LectureManage.CheckDeleteLectureCategoryNull(req.body.LectureInfoID)) {
             return res.status(200).send('{"Result" : "Fail"}');
         } else {
-            if (
-                await LectureManage.DeleteLectureCategory(
-                    req.body.LectureInfoID
-                )
-            ) {
+            if (await LectureManage.DeleteLectureCategory(req.body.LectureInfoID)) {
                 return res.status(200).send('{"Result" : "OK"}');
             } else {
                 return res.status(200).send('{"Result" : "Fail"}');
@@ -253,6 +218,21 @@ router.post("/deletecategory", async (req, res, next) => {
         }
     } catch (err) {
         res.send("Fail");
+    }
+});
+
+router.post("/updatecategory", SetUpload.single("upload"), async (req, res, next) => {
+    try {
+        if (LectureManage.CheckUpdateLectureCategoryNull(req)) {
+            return res.status(200).send('{"Result" : "Fail"}');
+        } else {
+            if (LectureManage.UpdateLectureCategory(req)) {
+                return res.status(200).send('{"Result" : "OK"}');
+            }
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(200).send('{"Result" : "Fail"}');
     }
 });
 
