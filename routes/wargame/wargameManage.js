@@ -238,35 +238,81 @@ exports.wargame_upload = async function wargame_upload(req, file) {
     }
 };
 exports.wargame_update = async function wargame_update(req) {
-    const { ChCategory, ChTitle, ChDescription, ChScore, ChFlag } = req.body;
-    const Chhash = bcrypt.hashSync(ChFlag, salt);
-    await wargame_info.update({
-        ChCategory,
-        ChTitle,
-        ChDescription,
-        ChScore,
-        ChFlag: Chhash,
-        ChSalt: salt,
-        ChDirectory1: req.files.file1[0].path
-    });
+    try {
+        const {
+            ChID,
+            ChCategory,
+            ChTitle,
+            ChDescription,
+            ChScore,
+            ChFlag
+        } = req.body;
+
+        if (req.file) {
+            if (ChFlag) {
+                const UploadResult = JSON.parse(JSON.stringify(req.file));
+                const Chhash = bcrypt.hashSync(ChFlag, salt);
+                await wargame_info.update(
+                    {
+                        ChCategory,
+                        ChTitle,
+                        ChDescription,
+                        ChScore,
+                        ChFlag: Chhash,
+                        ChSalt: salt,
+                        ChDirectory: UploadResult.filename
+                    },
+                    { where: { ChID } }
+                );
+                return true;
+            } else {
+                await wargame_info.update(
+                    {
+                        ChCategory,
+                        ChTitle,
+                        ChDescription,
+                        ChScore,
+                        ChDirectory: UploadResult.filename
+                    },
+                    { where: { ChID } }
+                );
+                return true;
+            }
+        } else {
+            if (ChFlag) {
+                const Chhash = bcrypt.hashSync(ChFlag, salt);
+                await wargame_info.update(
+                    {
+                        ChCategory,
+                        ChTitle,
+                        ChDescription,
+                        ChScore,
+                        ChFlag: Chhash,
+                        ChSalt: salt
+                    },
+                    { where: { ChID } }
+                );
+                return true;
+            } else {
+                await wargame_info.update(
+                    {
+                        ChCategory,
+                        ChTitle,
+                        ChDescription,
+                        ChScore
+                    },
+                    { where: { ChID } }
+                );
+                return true;
+            }
+        }
+    } catch (err) {
+        return false;
+    }
 };
 exports.CheckNull = function CheckNull(req) {
-    const {
-        ChCategory,
-        ChTitle,
-        ChDescription,
-        ChScore,
-        ChFlag,
-        ChLevel
-    } = req.body;
-    if (
-        !ChCategory ||
-        !ChTitle ||
-        !ChDescription ||
-        !ChScore ||
-        !ChFlag ||
-        !ChLevel
-    ) {
+    const { ChCategory, ChTitle, ChDescription, ChScore, ChLevel } = req.body;
+    if (!ChCategory || !ChTitle || !ChDescription || !ChScore || !ChLevel) {
         return true;
     } else {
         return false;
@@ -365,6 +411,21 @@ exports.GetChallengeSolverList = async function GetChallengeSolverList(params) {
     const data = await solver_table.findAll({
         attributes: ["Nick", "created_at"],
         where: { ChID: params.ChID }
+    });
+    return data;
+};
+exports.GetWargameInfo = async function GetWargameInfo(ChID) {
+    const data = await wargame_info.findOne({
+        attributes: [
+            "ChID",
+            "ChCategory",
+            "ChTitle",
+            "ChDescription",
+            "ChScore",
+            "ChLevel",
+            "ChDirectory"
+        ],
+        where: { ChID: ChID }
     });
     return data;
 };

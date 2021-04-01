@@ -15,10 +15,7 @@ exports.SetMulter = function SetMulter() {
             },
             filename(req, file, done) {
                 const ext = path.extname(file.originalname);
-                done(
-                    null,
-                    path.basename(file.originalname, ext) + Date.now() + ext
-                );
+                done(null, path.basename(file.originalname, ext) + Date.now() + ext);
             }
         }),
         limits: { fileSize: 10 * 1024 * 1024 }
@@ -36,23 +33,9 @@ exports.CheckWriteNull = function CheckWriteNull(body) {
 };
 
 exports.CheckModifyNull = function CheckModifyNull(body) {
-    const {
-        LectureID,
-        LectureCategory,
-        LectureTitle,
-        ID,
-        Nick,
-        LectureContent
-    } = body;
+    const { LectureInfoID, LectureID, LectureTitle, LectureContent } = body;
 
-    if (
-        !LectureID ||
-        !LectureCategory ||
-        !LectureTitle ||
-        !ID ||
-        !Nick ||
-        !LectureContent
-    ) {
+    if (!LectureInfoID || !LectureID || !LectureTitle || !LectureContent) {
         return true;
     } else {
         return false;
@@ -109,9 +92,7 @@ exports.CheckDeleteWrongAccess = async function CheckDeleteWrongAccess(body) {
     }
 };
 
-exports.CheckGetLectureListWrongAccess = async function CheckGetLectureListWrongAccess(
-    body
-) {
+exports.CheckGetLectureListWrongAccess = async function CheckGetLectureListWrongAccess(body) {
     const { LectureInfoID } = body;
     const Result = await lecture_info.findOne({ where: { LectureInfoID } });
     if (Result) {
@@ -141,13 +122,7 @@ exports.FindUser = async function FindUser(ID, Nick) {
     }
 };
 
-exports.InsertLecture = async function InsertLecture(
-    LectureInfoID,
-    LectureTitle,
-    LectureContent,
-    file,
-    user
-) {
+exports.InsertLecture = async function InsertLecture(LectureInfoID, LectureTitle, LectureContent, file, user) {
     const InsertLecture = await lecture.create({
         LectureInfoID: LectureInfoID,
         LectureTitle: LectureTitle,
@@ -174,37 +149,58 @@ exports.InsertLecture = async function InsertLecture(
     return InsertLecture;
 };
 
-exports.ModifyLecture = async function ModifyLecture(
-    LectureID,
-    LectureCategory,
-    LectureTitle,
-    ID,
-    LectureContent,
-    files
-) {
-    const ModifyLecture = await lecture.update(
-        {
-            LectureCategory: LectureCategory,
-            LectureTitle: LectureTitle,
-            LectureContent: LectureContent,
-            updated_at: Date.now()
-        },
-        {
-            where: { LectureID }
-        }
-    );
+exports.ModifyLecture = async function ModifyLecture(req) {
+    const { LectureID, LectureInfoID, LectureTitle, LectureContent } = req.body;
 
-    const UploadResult = JSON.parse(JSON.stringify(files));
-    for (i in UploadResult.files) {
-        await lecture_data.create({
-            LectureID: LectureID,
-            ID: ID,
-            FileName: UploadResult.files[i].filename,
-            URL: UploadResult.files[i].path,
-            created_at: Date.now()
-        });
+    if (req.file) {
+        const UploadResult = JSON.parse(JSON.stringify(req.file));
+        await lecture.update(
+            {
+                LectureTitle,
+                LectureContent,
+                LectureInfoID,
+                updated_at: Date.now()
+            },
+            {
+                where: { LectureID }
+            }
+        );
+        if (await lecture_data.findOne({ where: { LectureID }, attributes: ["LectureDataID"] })) {
+            await lecture_data.update(
+                {
+                    FileName: UploadResult.filename,
+                    URL: UploadResult.filename
+                },
+
+                { where: { LectureID } }
+            );
+        } else {
+            await lecture_data.create(
+                {
+                    LectureID,
+                    ID: req.user.ID,
+                    FileName: UploadResult.filename,
+                    URL: UploadResult.filename
+                },
+
+                { where: { LectureID } }
+            );
+        }
+    } else {
+        await lecture.update(
+            {
+                LectureTitle,
+                LectureContent,
+                updated_at: Date.now(),
+                LectureInfoID
+            },
+            {
+                where: { LectureID }
+            }
+        );
     }
-    return ModifyLecture;
+
+    return true;
 };
 
 exports.DeleteLecture = async function DeleteLecture(LectureID) {
@@ -232,7 +228,10 @@ exports.GetLectureInfo = async function GetLectureInfo() {
     const Data = await lecture_info.findAll({ where: { deleted: 0 } });
     return Data;
 };
-
+exports.GetLectureInfoOne = async function GetLectureInfo(LectureInfoID) {
+    const Data = await lecture_info.findAll({ where: { LectureInfoID } });
+    return Data;
+};
 // 해당 강의 번호와 관련된 강의들의 리스트를 뽑아옴
 exports.SelectLectureList = async function SelectLectureList(body) {
     const { LectureInfoID } = body;
@@ -246,7 +245,8 @@ exports.SelectLectureList = async function SelectLectureList(body) {
                 },
                 required: false
             }
-        ]
+        ],
+        order: [[{ model: lecture }, "LectureID", "DESC"]]
     });
     const DataObject = [];
     DataObject.push(Data);
@@ -274,6 +274,27 @@ exports.GetLecture = async function GetLecture(body) {
     });
     return Data;
 };
+exports.GetLectureDataAll = async function GetLectureDataAll(body) {
+    const { LectureID } = body;
+    console.log("123123", LectureID);
+    const Data = await lecture.findOne({
+        where: {
+            LectureID,
+            deleted: 0
+        },
+        include: [
+            {
+                model: lecture_data,
+                where: {
+                    deleted: 0
+                },
+                required: false,
+                attributes: ["FileName"]
+            }
+        ]
+    });
+    return Data;
+};
 exports.CheckCommentData = async function CheckCommentData(body) {
     const { LectureID } = body;
     const Result = await lecture.findOne({
@@ -297,6 +318,9 @@ exports.CheckCommentNull = function CheckCommentNull(body) {
 };
 exports.InsertLectureComment = async function InsertLectureComment(req) {
     const { LectureID, LectureCommentContent, LectureCommentGroup } = req.body;
+    if (LectureCommentContent.match(new RegExp("<iframe>", "i"))) {
+        return false;
+    }
     if (LectureCommentGroup) {
         const Check = await lecture_comment.findOne({
             where: {
@@ -325,25 +349,13 @@ exports.InsertLectureComment = async function InsertLectureComment(req) {
             let minute = ("0" + date.getMinutes()).slice(-2); //분 2자리 (00, 01 ... 59)
             let second = ("0" + date.getSeconds()).slice(-2); //초 2자리 (00, 01 ... 59)
             // Will display time in 10:30:23 format
-            let returnDate =
-                year +
-                "-" +
-                month +
-                "-" +
-                day +
-                " " +
-                hour +
-                ":" +
-                minute +
-                ":" +
-                second;
+            let returnDate = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
 
             const Final = {
                 Result: "OK",
                 LectureCommentID: ReplyResult.dataValues.LectureCommentID,
                 Nick: ReplyResult.dataValues.Nick,
-                LectureCommentContent:
-                    ReplyResult.dataValues.LectureCommentContent,
+                LectureCommentContent: ReplyResult.dataValues.LectureCommentContent,
                 LectureCommentGroup: ReplyResult.dataValues.LectureCommentGroup,
                 LectureCommentType: ReplyResult.dataValues.LectureCommentType,
                 created_at: returnDate,
@@ -382,8 +394,7 @@ exports.InsertLectureComment = async function InsertLectureComment(req) {
             Result: "OK",
             LectureCommentID: CommentResult.dataValues.LectureCommentID,
             Nick: CommentResult.dataValues.Nick,
-            LectureCommentContent:
-                CommentResult.dataValues.LectureCommentContent,
+            LectureCommentContent: CommentResult.dataValues.LectureCommentContent,
             LectureCommentGroup: CommentResult.dataValues.LectureCommentGroup,
             LectureCommentType: CommentResult.dataValues.LectureCommentType,
             created_at: CommentResult.dataValues.created_at,
@@ -445,19 +456,14 @@ exports.GetLectureComment = async function GetLectureComment(params) {
         } else {
             if (data.LectureCommentType == 0) {
                 for (let i = 0; i < Data.length; i++) {
-                    if (
-                        Data[i].LectureCommentType == 1 &&
-                        Data[i].LectureCommentGroup == current &&
-                        Data[i].deleted == 0
-                    ) {
+                    if (Data[i].LectureCommentType == 1 && Data[i].LectureCommentGroup == current && Data[i].deleted == 0) {
                         data.LectureCommentContent = "삭제 된 댓글입니다";
                         let manage = {
                             LectureCommentID: data.LectureCommentID,
                             Nick: data.Nick,
                             LectureCommentContent: data.LectureCommentContent,
                             LectureCommentGroup: data.LectureCommentGroup,
-                            ProfileImg:
-                                data.user_info.dataValues.profilepicture,
+                            ProfileImg: data.user_info.dataValues.profilepicture,
                             LectureCommentType: data.LectureCommentType,
                             created_at: data.created_at,
                             deleted: data.deleted
@@ -536,9 +542,7 @@ exports.CheckUpdateCommnetNull = function CheckUpdateCommnetNull(body) {
         return false;
     }
 };
-exports.CheckAddLectureCategoryNull = function CheckAddLectureCategoryNull(
-    body
-) {
+exports.CheckAddLectureCategoryNull = function CheckAddLectureCategoryNull(body) {
     const { LectureTitle, LectureDescription, LectureAuthor } = body;
     if (!LectureTitle || !LectureDescription || !LectureAuthor) {
         return true;
@@ -555,9 +559,7 @@ exports.AddLectureCategory = async function AddLectureCategory(body, img) {
         LectureImg: img
     });
 };
-exports.DeleteLectureCategory = async function DeleteLectureCategory(
-    LectureInfoID
-) {
+exports.DeleteLectureCategory = async function DeleteLectureCategory(LectureInfoID) {
     try {
         await lecture_info.update(
             {
@@ -572,12 +574,50 @@ exports.DeleteLectureCategory = async function DeleteLectureCategory(
         return false;
     }
 };
-exports.CheckDeleteLectureCategoryNull = async function CheckDeleteLectureCategoryNull(
-    LectureInfoID
-) {
+exports.CheckDeleteLectureCategoryNull = async function CheckDeleteLectureCategoryNull(LectureInfoID) {
     if (LectureInfoID == null) {
         return true;
     } else {
         return false;
     }
+};
+exports.CheckUpdateLectureCategoryNull = function CheckUpdateLectureCategoryNull(req) {
+    const { LectureInfoID, LectureTitle, LectureDescription, LectureAuthor } = req.body;
+    if (!LectureInfoID || !LectureTitle || !LectureDescription || !LectureAuthor) {
+        return true;
+    } else {
+        return false;
+    }
+};
+exports.UpdateLectureCategory = async function UpdateLectureCategory(req) {
+    if (req.file) {
+        const UploadResult = JSON.parse(JSON.stringify(file));
+        const result = await lecture_info.update(
+            {
+                LectureTitle: req.body.LectureTitle,
+                LectureDescription: req.body.LectureDescription,
+                LectureAuthor: LectureAuthor,
+                LectureImg: "/" + UploadResult.filename
+            },
+            { where: { LectureInfoID: req.body.LectureInfoID } }
+        );
+        console.log(result);
+        return result;
+    } else {
+        const result = await lecture_info.update(
+            {
+                LectureTitle: req.body.LectureTitle,
+                LectureDescription: req.body.LectureDescription,
+                LectureAuthor: req.body.LectureAuthor
+            },
+            { where: { LectureInfoID: req.body.LectureInfoID } }
+        );
+
+        return result;
+    }
+};
+
+exports.GetLectureAll = async function GetLectureAll() {
+    const data = await lecture.findAll({ where: { deleted: 0 } });
+    return data;
 };

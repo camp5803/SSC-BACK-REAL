@@ -13,9 +13,9 @@ router.use(isLoggedIn); // 로그인 확인
 
 router.get("/wargamelist", async (req, res, next) => {
     try {
-        if (wargameManage.CheckWrongAccess(req)) {
-            return res.status(404).send('{"Error" : "Wrong Access"}');
-        }
+        // if (wargameManage.CheckWrongAccess(req)) {
+        //     return res.status(404).send('{"Error" : "Wrong Access"}');
+        // }
         // if (await permit.Returnadmincheck(req)){
         //     return res.status(404).send('{"Error" : "Not Page"}');
         // }
@@ -32,6 +32,25 @@ router.get("/wargamelist", async (req, res, next) => {
     }
 });
 
+router.get("/wargameinfo/:ChID", async (req, res, next) => {
+    try {
+        const { ChID } = req.params;
+        if (wargameManage.CheckWrongAccess(req)) {
+            return res.status(404).send('{"Error" : "Wrong Access"}');
+        }
+        // if (await permit.Returnadmincheck(req)){
+        //     return res.status(404).send('{"Error" : "Not Page"}');
+        // }
+        if (ChID) {
+            const result = await wargameManage.GetWargameInfo(ChID);
+            return res.status(200).send(result);
+        } else {
+            return res.status(400).send('{"Error" : "Fail"}');
+        }
+    } catch (err) {
+        return res.status(400).send('{"Error" : "Fail"}');
+    }
+});
 // //  문제 업로드 API
 
 router.post("/upload", SetUpload.single("upload"), async (req, res, next) => {
@@ -76,26 +95,30 @@ router.post("/pro_delete", async (req, res, next) => {
 });
 
 /// 문제 수정 API
-router.post("/pro_update", async (req, res, next) => {
-    try {
-        if (wargameManage.CheckWrongAccess(req)) {
-            return res.status(404).send('{"Error" : "Wrong Access"}');
-        }
-        if (await permit.Returnadmincheck(req)) {
-            return res.status(404).send('{"Error" : "Not Page"}');
-        }
-        if (wargameManage.CheckNull(req)) {
-            return res.status(400).send('{"Error" : "Find Null"}');
-        } else {
-            if (await wargameManage.wargame_update(req)) {
-                return res.status(201).redirect("/");
+router.post(
+    "/pro_update",
+    SetUpload.single("upload"),
+    async (req, res, next) => {
+        try {
+            if (wargameManage.CheckWrongAccess(req)) {
+                return res.status(404).send('{"Error" : "Wrong Access"}');
             }
+            // if (await permit.Returnadmincheck(req)) {
+            //     return res.status(404).send('{"Error" : "Not Page"}');
+            // }
+            if (wargameManage.CheckNull(req)) {
+                return res.status(400).send('{"Error" : "Find Null"}');
+            } else {
+                if (await wargameManage.wargame_update(req)) {
+                    return res.status(201).send('{"Result":"OK"}');
+                }
+            }
+        } catch (error) {
+            console.error(error);
+            return res.status(200).send('{"Error":"Wrong"}');
         }
-    } catch (error) {
-        console.error(error);
-        return res.status(200).send('{"Error":"Wrong"}');
     }
-});
+);
 
 /// 문제 댓글 추가 API
 router.post("/pro_comment", async (req, res, next) => {
