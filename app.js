@@ -85,7 +85,7 @@ app.use("/api/uploads", express.static("uploads"));
 app.use("/api/profile", express.static("profilepicture"));
 app.use("/api/lectureimg", express.static("lectureimg"));
 app.use("/api/wargame", wargame_info);
-app.use("/api/admin", admin);
+// app.use("/api/admin", admin);
 app.use("/api/rank", rank);
 app.use("/api/lecturefiledownload", LectureFiledownload);
 app.use("/api/wargamefiledownload", wargameFileDownLoad);

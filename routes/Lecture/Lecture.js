@@ -1,92 +1,12 @@
 const express = require("express");
 const { isLoggedIn } = require("../../middleware/CheckLogin");
-const ApiLimit = require("../../middleware/ApiLimit");
+const { Returnadmincheck } = require("../../middleware/Returnadmincheck");
 const LectureManage = require("./LectureManage");
 const router = express.Router();
 
 router.use(isLoggedIn); // 로그인 확인
 router.get("/", (req, res, next) => {});
 const SetUpload = LectureManage.SetMulter();
-
-router.post("/write", SetUpload.single("upload"), async (req, res, next) => {
-    try {
-        const { LectureInfoID, LectureTitle, LectureContent } = req.body;
-
-        if (LectureManage.CheckWriteNull(req.body)) {
-            return res.status(400).send('{"Error" : "Find Null"}');
-        }
-
-        // if (LectureManage.CheckWrtieWrongAccess(req)) {
-        //     return res.status(400).send('{"Error" : "Wrong Access"}');
-        // }
-
-        // if (await LectureManage.FindUser(ID, Nick)) {
-        //     return res.status(400).send('{"Error" : "Wrong User"}');
-        // }
-
-        await LectureManage.InsertLecture(LectureInfoID, LectureTitle, LectureContent, req.file, req.user);
-        return res.status(201).send('{"Result" : "OK"}');
-        // return res.status(201).redirect("/");
-    } catch (err) {
-        console.log(err);
-        return res.status(400).send('{"Error" : "Fail"}');
-    }
-});
-
-router.post("/modify", SetUpload.single("upload"), async (req, res, next) => {
-    try {
-        if (LectureManage.CheckModifyNull(req.body)) {
-            return res.status(400).send('{"Error" : "Find Null"}');
-        }
-
-        if (await LectureManage.ModifyLecture(req)) {
-            return res.status(201).send('{"Result" : "OK"}');
-        }
-    } catch (err) {
-        console.log(err);
-        return res.status(400).send('{"Error" : "Fail"}');
-    }
-});
-
-router.post("/delete", async (req, res, next) => {
-    try {
-        const { LectureID } = req.body;
-        if (LectureManage.CheckDeleteNull(req.body)) {
-            return res.status(400).send('{"Error" : "Find Null"}');
-        }
-
-        if (await LectureManage.CheckDeleteWrongAccess(req.body)) {
-            return res.status(400).send('{"Error" : "Wrong Access"}');
-        }
-        await LectureManage.DeleteLecture(LectureID);
-
-        return res.status(201).redirect("/");
-    } catch (err) {
-        console.log(err);
-        return res.status(400).send('{"Error" : "Fail"}');
-    }
-});
-
-router.post("/addcategory", SetUpload.single("LectureImg"), async (req, res, next) => {
-    try {
-        if (LectureManage.CheckAddLectureCategoryNull(req.body)) {
-            return res.status(200).send('{"Error" : "Find Null"}');
-        }
-        await LectureManage.AddLectureCategory(req.body, "/" + req.file.filename);
-        return res.status(201).send('{"Result" : "OK"}');
-    } catch (err) {
-        console.log(err);
-        return res.status(400).send('{"Error" : "Fail"}');
-    }
-});
-
-router.post("/uploadimage", SetUpload.single("upload"), async (req, res, next) => {
-    try {
-        res.send("http://localhost:9821/uploads/" + req.file.filename);
-    } catch (err) {
-        res.send("Fail");
-    }
-});
 
 // 강의 카테고리로 해당 카테고리의 강의 목록 가져오기
 router.post("/getlecturelist", async (req, res, next) => {
@@ -205,7 +125,88 @@ router.get("/getlecturecomment/:LectureID", async (req, res, next) => {
     res.status(200).send(Result);
 });
 
-router.post("/deletecategory", async (req, res, next) => {
+// 아래부턴 관리자 기능
+
+router.post("/write", Returnadmincheck, SetUpload.single("upload"), async (req, res, next) => {
+    try {
+        const { LectureInfoID, LectureTitle, LectureContent } = req.body;
+
+        if (LectureManage.CheckWriteNull(req.body)) {
+            return res.status(400).send('{"Error" : "Find Null"}');
+        }
+
+        // if (LectureManage.CheckWrtieWrongAccess(req)) {
+        //     return res.status(400).send('{"Error" : "Wrong Access"}');
+        // }
+
+        // if (await LectureManage.FindUser(ID, Nick)) {
+        //     return res.status(400).send('{"Error" : "Wrong User"}');
+        // }
+
+        await LectureManage.InsertLecture(LectureInfoID, LectureTitle, LectureContent, req.file, req.user);
+        return res.status(201).send('{"Result" : "OK"}');
+        // return res.status(201).redirect("/");
+    } catch (err) {
+        console.log(err);
+        return res.status(400).send('{"Error" : "Fail"}');
+    }
+});
+
+router.post("/modify", Returnadmincheck, SetUpload.single("upload"), async (req, res, next) => {
+    try {
+        if (LectureManage.CheckModifyNull(req.body)) {
+            return res.status(400).send('{"Error" : "Find Null"}');
+        }
+
+        if (await LectureManage.ModifyLecture(req)) {
+            return res.status(201).send('{"Result" : "OK"}');
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(400).send('{"Error" : "Fail"}');
+    }
+});
+
+router.post("/delete", Returnadmincheck, async (req, res, next) => {
+    try {
+        const { LectureID } = req.body;
+        if (LectureManage.CheckDeleteNull(req.body)) {
+            return res.status(400).send('{"Error" : "Find Null"}');
+        }
+
+        if (await LectureManage.CheckDeleteWrongAccess(req.body)) {
+            return res.status(400).send('{"Error" : "Wrong Access"}');
+        }
+        await LectureManage.DeleteLecture(LectureID);
+
+        return res.status(201).send('{"Result" : "OK"}');
+    } catch (err) {
+        console.log(err);
+        return res.status(400).send('{"Error" : "Fail"}');
+    }
+});
+
+router.post("/addcategory", Returnadmincheck, SetUpload.single("LectureImg"), async (req, res, next) => {
+    try {
+        if (LectureManage.CheckAddLectureCategoryNull(req.body)) {
+            return res.status(200).send('{"Error" : "Find Null"}');
+        }
+        await LectureManage.AddLectureCategory(req.body, "/" + req.file.filename);
+        return res.status(201).send('{"Result" : "OK"}');
+    } catch (err) {
+        console.log(err);
+        return res.status(400).send('{"Error" : "Fail"}');
+    }
+});
+
+router.post("/uploadimage", Returnadmincheck, SetUpload.single("upload"), async (req, res, next) => {
+    try {
+        res.send("http://localhost:9821/uploads/" + req.file.filename);
+    } catch (err) {
+        res.send("Fail");
+    }
+});
+router.post("/deletecategory", Returnadmincheck, async (req, res, next) => {
     try {
         if (await LectureManage.CheckDeleteLectureCategoryNull(req.body.LectureInfoID)) {
             return res.status(200).send('{"Result" : "Fail"}');
@@ -221,7 +222,7 @@ router.post("/deletecategory", async (req, res, next) => {
     }
 });
 
-router.post("/updatecategory", SetUpload.single("upload"), async (req, res, next) => {
+router.post("/updatecategory", Returnadmincheck, SetUpload.single("upload"), async (req, res, next) => {
     try {
         if (LectureManage.CheckUpdateLectureCategoryNull(req)) {
             return res.status(200).send('{"Result" : "Fail"}');
@@ -238,7 +239,7 @@ router.post("/updatecategory", SetUpload.single("upload"), async (req, res, next
 
 router.use((err, req, res, next) => {
     console.error(err);
-    res.status(400).send('{"Error" : "Fail"}');
+    res.status(400).send('{"Error" : "Error"}');
 });
 
 module.exports = router;
