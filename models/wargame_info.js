@@ -51,6 +51,14 @@ module.exports = class wargame_info extends Sequelize.Model {
                     type: Sequelize.STRING(200),
                     allowNull: false
                 },
+                deleted: {
+                    type: Sequelize.INTEGER,
+                    defaultValue: null
+                },
+                deleted_at: {
+                    type: Sequelize.DATE,
+                    defaultValue: null
+                },
                 created_at: {
                     type: Sequelize.DATE,
                     allowNull: true

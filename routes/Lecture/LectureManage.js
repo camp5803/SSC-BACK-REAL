@@ -43,9 +43,9 @@ exports.CheckModifyNull = function CheckModifyNull(body) {
 };
 
 exports.CheckDeleteNull = function CheckDeleteNull(body) {
-    const { LectureID, ID } = body;
+    const { LectureID } = body;
 
-    if (!LectureID || !ID) {
+    if (!LectureID) {
         return true;
     } else {
         return false;
@@ -82,9 +82,9 @@ exports.CheckModifyWrongAccess = async function CheckModifyWrongAccess(body) {
 };
 
 exports.CheckDeleteWrongAccess = async function CheckDeleteWrongAccess(body) {
-    const { ID, LectureID } = body;
+    const { LectureID } = body;
 
-    const Result = await lecture.findOne({ where: { ID, LectureID } });
+    const Result = await lecture.findOne({ where: { LectureID } });
     if (!Result) {
         return true;
     } else {

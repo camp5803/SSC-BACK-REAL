@@ -20,10 +20,7 @@ exports.SetMulter = function SetMulter() {
             },
             filename(req, file, done) {
                 const ext = path.extname(file.originalname);
-                done(
-                    null,
-                    path.basename(file.originalname, ext) + Date.now() + ext
-                );
+                done(null, path.basename(file.originalname, ext) + Date.now() + ext);
             }
         }),
         limits: { fileSize: 10 * 1024 * 1024 }
@@ -149,17 +146,10 @@ exports.CheckWrongAccess = function CheckWrongAccess(req) {
 exports.datalist = async function datalist() {
     try {
         const problems = await wargame_info.findAll({
-            attributes: [
-                "ChID",
-                "ChCategory",
-                "ChTitle",
-                "ChDescription",
-                "ChDirectory",
-                "ChScore",
-                "ChSolver",
-                "ChLevel",
-                "ChAuthor"
-            ]
+            where: {
+                deleted: 0
+            },
+            attributes: ["ChID", "ChCategory", "ChTitle", "ChDescription", "ChDirectory", "ChScore", "ChSolver", "ChLevel", "ChAuthor"]
         });
         if (problems) {
             return problems;
@@ -180,10 +170,7 @@ exports.SetMulter = function SetMulter() {
             },
             filename(req, file, done) {
                 const ext = path.extname(file.originalname);
-                done(
-                    null,
-                    path.basename(file.originalname, ext) + Date.now() + ext
-                );
+                done(null, path.basename(file.originalname, ext) + Date.now() + ext);
             }
         }),
         limits: { fileSize: 10 * 1024 * 1024 }
@@ -192,14 +179,7 @@ exports.SetMulter = function SetMulter() {
 
 exports.wargame_upload = async function wargame_upload(req, file) {
     try {
-        const {
-            ChCategory,
-            ChTitle,
-            ChDescription,
-            ChScore,
-            ChFlag,
-            ChLevel
-        } = req.body;
+        const { ChCategory, ChTitle, ChDescription, ChScore, ChFlag, ChLevel } = req.body;
 
         ChAuthor = req.user.ID;
         const Chhash = bcrypt.hashSync(ChFlag, salt);
@@ -239,14 +219,7 @@ exports.wargame_upload = async function wargame_upload(req, file) {
 };
 exports.wargame_update = async function wargame_update(req) {
     try {
-        const {
-            ChID,
-            ChCategory,
-            ChTitle,
-            ChDescription,
-            ChScore,
-            ChFlag
-        } = req.body;
+        const { ChID, ChCategory, ChTitle, ChDescription, ChScore, ChFlag } = req.body;
 
         if (req.file) {
             if (ChFlag) {
@@ -350,15 +323,13 @@ exports.addcomment = async function addcomment(req) {
     });
 };
 exports.commentidcheck = async function commentidcheck(req) {
-    await lecture_comment
-        .findAll({ where: { ChID: req.body.ChID, ID: req.user } })
-        .then(function (results) {
-            if (results) {
-                return true;
-            } else {
-                return false;
-            }
-        });
+    await lecture_comment.findAll({ where: { ChID: req.body.ChID, ID: req.user } }).then(function (results) {
+        if (results) {
+            return true;
+        } else {
+            return false;
+        }
+    });
 };
 
 exports.commentupdate = async function commentupdate(req) {
@@ -416,15 +387,7 @@ exports.GetChallengeSolverList = async function GetChallengeSolverList(params) {
 };
 exports.GetWargameInfo = async function GetWargameInfo(ChID) {
     const data = await wargame_info.findOne({
-        attributes: [
-            "ChID",
-            "ChCategory",
-            "ChTitle",
-            "ChDescription",
-            "ChScore",
-            "ChLevel",
-            "ChDirectory"
-        ],
+        attributes: ["ChID", "ChCategory", "ChTitle", "ChDescription", "ChScore", "ChLevel", "ChDirectory"],
         where: { ChID: ChID }
     });
     return data;
