@@ -1,8 +1,8 @@
-# SecurityFirst 새싹챌린지 Season.1 최종버젼
-## SSC-BACK-REAL
+## SecurityFirst 새싹챌린지 Season.1 최종버젼
+# SSC-BACK-REAL
 
 
-#### /lectureimg                                      
+### /lectureimg                                      
 담당 : 김승환 , 황영하
 
 새싹챌 이미지 , 강의 썸네일 이미지등을 모아놓은 곳 입니다.
@@ -45,17 +45,39 @@
     /wargame_info.js == 워 게임 정보
 ```
 
+***
    
 /passport
 담당 : 김승환
 ++수정 예정++
 
+***
+
 /profilepicture
 담당 : 김승환
 * 로그인한 유저가 프로필 사진을 올릴시 모아두는 경로입니다.
 
+***
+
 /routes
 담당 : 김승환 , 황영하
 #### 새싹챌린지의 모든 API 기능을 처리해주는 가장 중요한 경로입니다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+***
 
 
