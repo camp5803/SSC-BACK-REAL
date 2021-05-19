@@ -9,7 +9,7 @@
 
 ***
 
-> /middleware
+/middleware
 담당 : 김승환 , 황영하
 
 백엔드 API에 요청하기전 확인해야 하는 중간 단계를 만들어 이를 거쳐 API에 요청하도록 middleware로 정리해 놓았습니다.
@@ -28,7 +28,7 @@
 
 /models
 담당 : 김승환 , 황영하
-
+<br>
 
 1. index.js
 * Promise 기반으로 구현된 객체와 관계형 db의 데이터를 매핑 해주는 sequelize를 사용하였으며 Mysql 은 Mysql Workbench 8.0 을 이용해 관리합니다.
@@ -47,6 +47,6 @@
 ```
 
    
-
+/passport
 
 
