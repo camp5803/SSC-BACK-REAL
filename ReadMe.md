@@ -4,6 +4,7 @@ SecurityFirst 새싹챌린지 Season.1 최종버젼
 
 /lectureimg                                      
 담당 : 김승환 , 황영하
+
 새싹챌 이미지 , 강의 썸네일 이미지등을 모아놓은 곳 입니다.
 
 ***
