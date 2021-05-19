@@ -27,6 +27,25 @@
 ***
 
 /models
+담당 : 김승환 , 황영하
+
+
+1. index.js
+* Promise 기반으로 구현된 객체와 관계형 db의 데이터를 매핑 해주는 sequelize를 사용하였으며 Mysql 은 Mysql Workbench 8.0 을 이용해 관리합니다.
+* 다음에 나오는 객체형 db로 만든 파일들을 mysql에 자동 매핑시켜주는 부분을 담당하는 중간 매개체 역할을 합니다.
+    lecture_comment.js == 강의 댓글
+    lecture_data.js == 강의 자료(파일) 모음
+    lecture_info.js == 강의 제목 , 강의 내용 글
+    lecture.js == 강의 종류
+
+    month_CTF.js == 이달의 CTF 정보
+    solver_table.js == 워 게임(모든 문제) 풀이자 정보
+    submit_history.js == 워 게임 인증 로그 정보
+    user_info.js == 유저 정보
+    wargame_info.js == 워 게임 정보
+      
+
+   
 
 
 
