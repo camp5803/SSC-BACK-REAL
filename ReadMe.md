@@ -1,5 +1,4 @@
-ㅁㄴㅇㅁㄴㅇ
-
+SecurityFirst 새싹챌린지 Season.1 최종버젼
 # SSC-BACK-REAL
 
 
@@ -28,7 +27,6 @@
 
 /models
 담당 : 김승환 , 황영하
-<br>
 
 1. index.js
 * Promise 기반으로 구현된 객체와 관계형 db의 데이터를 매핑 해주는 sequelize를 사용하였으며 Mysql 은 Mysql Workbench 8.0 을 이용해 관리합니다.
@@ -48,5 +46,15 @@
 
    
 /passport
+담당 : 김승환
+++수정 예정++
+
+/profilepicture
+담당 : 김승환
+* 로그인한 유저가 프로필 사진을 올릴시 모아두는 경로입니다.
+
+/routes
+담당 : 김승환 , 황영하
+#### 새싹챌린지의 모든 API 기능을 처리해주는 가장 중요한 경로입니다.
 
 
