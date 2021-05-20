@@ -222,7 +222,7 @@
 
 공격 코드 : <iframe src=javascript:parent.document.getElementsByTagName('body')[0].innerHTML="hackedByCodstice"> 
 
-조치 : 당시 사용하던 MarkDown에 iframe 공격만 허용이 되었고, toast editor 로 교체 하였음.
+조치 : 당시 사용하던 MarkDown에 iframe 공격만 허용이 되었고, iframe 태그를 사용하지 못하게 필터링 하였음.
 
 ***
     
