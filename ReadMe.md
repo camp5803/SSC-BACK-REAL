@@ -1,4 +1,4 @@
-## SecurityFirst 새싹챌린지 Season.1 최종버(Back-End)
+## SecurityFirst 새싹챌린지 Season.1 최종버전(Back-End)
 
 최종 수정 일시 : 2021-05-20
 
