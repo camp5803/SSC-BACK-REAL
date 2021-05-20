@@ -1,4 +1,4 @@
-## SecurityFirst 새싹챌린지 Season.1 최종버젼(Back-End)
+## SecurityFirst 새싹챌린지 Season.1 최종버(Back-End)
 
 최종 수정 일시 : 2021-05-20
 
@@ -118,8 +118,9 @@
 * SecurityFirst 기초교육 강의와 그 외 회원들이 자신이 알려주고 싶은 강의를 찍어 올릴 수 있는 게시판입니다. 강의는 관리자 권한을 가진 사람이 직접 올려줄 수 있음.
 
 * Lecture.js 강의 쓰기 , 강의 수정 , 강의 삭제 , 카테고리 지정 , 강의 댓글 , 대댓글 요청 수정 등이 구현되어 있으며 요청받은 값에 의해 관리자 권한인지 일반 유저인지 NULL 값이 있는지 등에 대한 요청 확인 후 해당 API에서 필요로 하는 권한 and 값 검증이 확인 될 경우 해당 API에 맞는 기능을 실행하고 return 해주는 방식으로 되어 있습니다. 파일 업로드 및 강의 파일 수정은 multer의 single 과 fields를 사용,
+
 * LectureFileDownload.js  파일 존재 여부 -> 파일명과 경로명 추출 -> setHeader 헤더 설정 -> CreateReadStream 파일 스트림 읽기모드 -> pipe 복사하여 넘겨줌
-* 
+
 * LeactureManage.js 대댓글 구현 및 강의 게시판에 필요한 함수들이 구현되어 모듈화해서 모아놓은 파일
 
 ***
@@ -148,7 +149,7 @@
 * Register.js 새싹챌 회원가입을 담당 /checkid /checkemail /checknick 모두 front-end에서 axios로 구현되어 실시간 입력시 요청하여 각 이름에 맞는 정규패턴식을 설정. 중복 이름이거나 정규패턴식에 어긋날 시 return 반환
 
 * RegisterManage.js 회원가입란 각각에 대한 중복 or 공백을 확인하며 모두 통과하면 DB에 저장
-* 
+
 ***
 
 ### /routes/admin
