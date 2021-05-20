@@ -24,6 +24,7 @@
 
 사용한 라이브러리 : Sequelize , Passport , redis , bcrypt , multer , express-rate-limit , request-ip
 
+서버 환경 : SecurityFirst 동아리 방 운영진 컴퓨터 windows 10 WSL2 (ubuntu 16.04)
 
 ### 2. 새싹챌 기능 설명
 
@@ -83,7 +84,7 @@
 
 담당 개발 : 김승환
 
-==수정 중==
+==로그인 모듈 수정중==
 
 ***
 
@@ -100,6 +101,7 @@
 담당 개발 : 김승환 , 황영하
 
 #### 새싹챌린지의 모든 API 기능을 처리해주는 가장 중요한 경로입니다.
+#### 대부분의 API는 크게 API 실행과 API함수를 구현 해놓은 APIManage로 나뉩니다.
 
 ### /routes/Auth
 
@@ -113,7 +115,12 @@
 
 담당 개발 : 김승환
 
-==수정 중==
+* SecurityFirst 기초교육 강의와 그 외 회원들이 자신이 알려주고 싶은 강의를 찍어 올릴 수 있는 게시판입니다. 강의는 관리자 권한을 가진 사람이 직접 올려줄 수 있음.
+
+* Lecture.js 강의 쓰기 , 강의 수정 , 강의 삭제 , 카테고리 지정 , 강의 댓글 , 대댓글 요청 수정 등이 구현되어 있으며 요청받은 값에 의해 관리자 권한인지 일반 유저인지 NULL 값이 있는지 등에 대한 요청 확인 후 해당 API에서 필요로 하는 권한 and 값 검증이 확인 될 경우 해당 API에 맞는 기능을 실행하고 return 해주는 방식으로 되어 있습니다. 파일 업로드 및 강의 파일 수정은 multer의 single 과 fields를 사용,
+* LectureFileDownload.js  파일 존재 여부 -> 파일명과 경로명 추출 -> setHeader 헤더 설정 -> CreateReadStream 파일 스트림 읽기모드 -> pipe 복사하여 넘겨줌
+* 
+* LeactureManage.js 대댓글 구현 및 강의 게시판에 필요한 함수들이 구현되어 모듈화해서 모아놓은 파일
 
 ***
 
@@ -121,7 +128,8 @@
 
 담당 개발 : 김승환
 
-==수정 중==
+* Login.js 로그인 요청시 미들웨어에 만들어 둔 isNotLoggedIn을 통해 현재 비로그인 상태를 확인 후 PassPortHandler를 호출하여 로그인을 시도
+* LoginManage.js 로그인 성공시 로그인 IP를 저장합니다. passport를 사용해 로그인을 처리합니다. , //AlreadyLoginHandler 미사용중
 
 ***
 
@@ -129,7 +137,7 @@
 
 담당 개발 : 김승환
 
-==수정 중==
+* Logout.js 로그아웃 처리 요청하는 seesion 삭제
 
 ***
 
@@ -137,15 +145,19 @@
 
 담당 개발 : 김승환 , 황영하
 
-==수정 중==
+* Register.js 새싹챌 회원가입을 담당 /checkid /checkemail /checknick 모두 front-end에서 axios로 구현되어 실시간 입력시 요청하여 각 이름에 맞는 정규패턴식을 설정. 중복 이름이거나 정규패턴식에 어긋날 시 return 반환
 
+* RegisterManage.js 회원가입란 각각에 대한 중복 or 공백을 확인하며 모두 통과하면 DB에 저장
+* 
 ***
 
 ### /routes/admin
 
-담당 개발 : 김승환 , 황영하
+담당 개발 : 황영하
 
-==수정 중==
+* admin 확인 후 페이지 입장 , 유저 정보 목록 , 유저 정보 요청(수정 가능한 관리자 , 일반 사용자) , 워 게임 추가 수정 삭제 , 이달의 CTF 테이블 추가 수정 삭제
+* adminmanage.js 유저 정보(수정 가능한 관리자) , 유저 업데이트 기능 (CRUD)
+* CTFManage.js 이달의 CTF 관리(CRUD)
 
 ***
 
@@ -153,7 +165,8 @@
 
 담당 개발 : 황영하
 
-==수정 중==
+* myinfo.js 해당 세션을 갖고 있는 사용자의 내 정보 확인 , 내 정보 수정 , 다른 유저 검색 
+* myinfomanage.js 내 정보 확인 , 내 정보 수정 요청
 
 ***
 
@@ -161,7 +174,8 @@
 
 담당 개발 : 황영하
 
-==수정 중==
+* rank.js 랭킹 요청
+* rankmanage.js 관리자 권한을 가진 유저를 제외한 유저들의 점수 내림차순으로 보여줌과 내 정보 요청 시 보여줄 내 점수
 
 ***
 
@@ -169,15 +183,18 @@
 
 담당 개발 : 황영하
 
-==수정 중==
+* users.js 유저 정보 테이블 요청
+* usersmanage.js 유저 정보 확인
 
 ***
 
 ### /routes/wargame
 
-담당 개발 : 김승환 , 황영하
+담당 개발 : 황영하
 
-==수정 중==
+* wargame_info.js 워게임들에 대한 필요한 API를 담고 있으며 Front-End 워게임 댓글은 미구현 상태
+* wargameFileDownload.js 워 게임 파일은 여러 파일을 올리는 것이 아닌 하나의 zip 파일로 압축해서 올리므로 하나만 편하게 다운받을 수 있음
+* wargameManage.js 워 게임 관리(CRUD)에 대한 함수 기능들과 그 외 필요한 함수 들어 있으며 플래그는 bcrypt로 암호화하여 비교합니다. 
 
 ***
 
@@ -189,29 +206,30 @@
 
 | 공격 가능성                              |    보안성    |
 |:------------------------------------|:---:|
-| SQL injection | 바인딩 데이터를 사용하는 Sequelize+bcrypt를 사용 |
+| SQL injection | 바인딩 데이터를 사용하는 Sequelize와 암호화 모듈 bcrypt를 사용 |
 | API 지속 요청 | 시간에 따른 API 요청을 확인하여 제한할 수 있는 express-rate-limit 사용|
 | 파일 업로드   | Node.Js는 라우팅 가능한 경로에서 접근이 가능 + 파일 확장자 검사 |
+| admin 페이지 요청   | 권한이 없는 사용자는 접근할 수 없게 막혀있으며 이를 조작하려면 SQL injection을 할 수 있어야함. |
 
-그 외 보안 취약점 패치 내용(FE , BE)
+2021 03-21 부터 베타 오픈하여 동아리원들이 이용하며 버그 및 취약점 발견시 제보를 받고 있음.
 
-2021-03-23 front-end 에서 취약한 Markdown 사용 결과 library 에 xss 공격에 성공한 적이 있음.
+2021 05-20 기준 1건 발견
+
+보안 취약점 패치 내용(FE , BE)
+
+2021-03-23 front-end 에서 취약한 Markdown 사용 결과 xss 공격에 성공한 적이 있음.
 
 공격 코드 : <iframe src=javascript:parent.document.getElementsByTagName('body')[0].innerHTML="hackedByCodstice"> 
 
 조치 : 당시 사용하던 MarkDown에 iframe 공격만 허용이 되었고, toast editor 로 교체 하였음.
 
-
-
-
-
 ***
     
 ### 4. 개발 후기
     
-> 김승환 : 
+**김승환** : 
    
-> 황영하 : 
+**황영하** : 첫 협업 개발이라 미흡한점이 많았고 앞으로 개선할 점도 많이 배웠습니다. 또한 개발하면서 node의 동작 원리를 같이  재밌었습니다.
     
     
 
